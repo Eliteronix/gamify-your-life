@@ -10,11 +10,6 @@ module.exports = (sequelize, DataTypes) => {
 			allowNullValue: false,
 		},
 		task: DataTypes.STRING,
-		priority: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0,
-		},
-		filters: DataTypes.STRING,
 		additions: DataTypes.STRING,
 		date: {
 			type: DataTypes.DATE,
