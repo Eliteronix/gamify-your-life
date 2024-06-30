@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Eliteronix/gamify-your-life#readme",
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "sequelize": "^6.37.3"
   }
 }
