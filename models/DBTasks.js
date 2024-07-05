@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	return sequelize.define('DBProcessQueue', {
+	return sequelize.define('DBTasks', {
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
