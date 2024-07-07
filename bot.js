@@ -99,7 +99,7 @@ function readyDiscord() {
 	})();
 
 	setTimeout(() => {
-		executeProcessQueue(client, bancho);
+		executeProcessQueue(client);
 	}, 60000);
 }
 
@@ -109,14 +109,14 @@ client.on('interactionCreate', interaction => {
 
 client.on('error', console.error);
 
-async function executeProcessQueue(client, bancho) {
+async function executeProcessQueue(client) {
 	try {
-		await executeNextProcessQueueTask(client, bancho);
+		await executeNextProcessQueueTask(client);
 	} catch (e) {
 		console.error('bot.js | executeNextProcessQueueTask' + e);
 	}
 
 	setTimeout(() => {
-		executeProcessQueue(client, bancho);
+		executeProcessQueue(client);
 	}, 650);
 }
