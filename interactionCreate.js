@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 
-module.exports = async function (client, bancho, interaction) {
+module.exports = async function (interaction) {
 	//Create a collection for the commands
-	client.commands = new Discord.Collection();
+	interaction.client.commands = new Discord.Collection();
 
 	//get all command files
 	const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -14,7 +14,7 @@ module.exports = async function (client, bancho, interaction) {
 
 		// set a new item in the Collection
 		// with the key as the command name and the value as the exported module
-		client.commands.set(command.name, command);
+		interaction.client.commands.set(command.name, command);
 	}
 
 	if (interaction.isCommand()) {
@@ -30,7 +30,7 @@ module.exports = async function (client, bancho, interaction) {
 		try {
 			await command.autocomplete(interaction);
 		} catch (error) {
-			console.error('interactionCreate.js | autocomplete' + error);
+			console.error('interactionCreate.js | autocomplete ' + error);
 		}
 	}
 };

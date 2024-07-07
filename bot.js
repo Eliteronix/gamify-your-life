@@ -104,7 +104,7 @@ function readyDiscord() {
 }
 
 client.on('interactionCreate', interaction => {
-	interactionCreate(client, interaction);
+	interactionCreate(interaction);
 });
 
 client.on('error', console.error);

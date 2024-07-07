@@ -90,7 +90,7 @@ module.exports = {
 			});
 		});
 
-		let filtered = mappools.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
+		let filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
 
 		filtered = filtered.slice(0, 25);
 
