@@ -4,7 +4,6 @@ const { Op } = require('sequelize');
 module.exports = {
 	executeNextProcessQueueTask: async function (client) {
 		let now = new Date();
-		module.exports.logDatabaseQueries(1, 'utils.js DBProcessQueue nextTask');
 		let nextTasks = await DBProcessQueue.findAll({
 			where: {
 				beingExecuted: false,
@@ -19,20 +18,18 @@ module.exports = {
 		});
 
 		for (let i = 0; i < nextTasks.length; i++) {
-			if (!module.exports.wrongCluster(client, nextTasks[i].id)) {
-				nextTasks[i].beingExecuted = true;
-				await nextTasks[i].save();
+			nextTasks[i].beingExecuted = true;
+			await nextTasks[i].save();
 
-				executeFoundTask(client, nextTasks[i]);
-				break;
-			}
+			executeFoundTask(client, nextTasks[i]);
+			break;
 		}
 	},
 };
 
 async function executeFoundTask(client, nextTask) {
 	try {
-		if (nextTask && !module.exports.wrongCluster(client, nextTask.id)) {
+		if (nextTask) {
 			const task = require(`./processQueueTasks/${nextTask.task}.js`);
 
 			await task.execute(client, nextTask);

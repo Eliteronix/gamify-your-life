@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
 		indexes: [
 			{
 				unique: false,
-				fields: ['beingExecuted', 'date', 'priority']
+				fields: ['beingExecuted', 'date']
 			}
 		]
 	});
