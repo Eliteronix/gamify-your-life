@@ -113,7 +113,7 @@ async function executeProcessQueue(client) {
 	try {
 		await executeNextProcessQueueTask(client);
 	} catch (e) {
-		console.error('bot.js | executeNextProcessQueueTask' + e);
+		console.error('bot.js | executeNextProcessQueueTask ' + e);
 	}
 
 	setTimeout(() => {

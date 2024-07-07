@@ -12,7 +12,6 @@ module.exports = {
 				}
 			},
 			order: [
-				['priority', 'DESC'],
 				['date', 'ASC'],
 			]
 		});
