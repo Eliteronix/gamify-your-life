@@ -2,8 +2,6 @@ const Discord = require('discord.js');
 const fs = require('fs');
 
 module.exports = async function (client, bancho, interaction) {
-	process.send(`discorduser ${interaction.user.id}}`);
-
 	//Create a collection for the commands
 	client.commands = new Discord.Collection();
 
