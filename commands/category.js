@@ -70,6 +70,20 @@ module.exports = {
 						.setRequired(true)
 						.setAutocomplete(true)
 				)
+				.addStringOption(option =>
+					option
+						.setName('new-name')
+						.setNameLocalizations({
+							'en-GB': 'new-name',
+							'en-US': 'new-name',
+						})
+						.setDescription('The new name of the task category')
+						.setDescriptionLocalizations({
+							'en-GB': 'The new name of the task category',
+							'en-US': 'The new name of the task category',
+						})
+						.setRequired(true)
+				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -198,7 +212,50 @@ module.exports = {
 				}
 			}
 		} else if (subcommand === 'rename') {
+			const categoryName = interaction.options.getString('name').toLowerCase();
 
+			const category = await DBCategories.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: categoryName,
+				},
+			});
+
+			if (!category) {
+				try {
+					await interaction.editReply(`Category \`${categoryName}\` does not exist`);
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			const newName = interaction.options.getString('new-name').toLowerCase();
+
+			await DBCategories.update({
+				name: newName,
+			}, {
+				where: {
+					guildId: interaction.guild.id,
+					name: categoryName,
+				},
+			});
+
+			const channel = interaction.guild.channels.cache.find(channel => channel.name === categoryName);
+
+			if (channel) {
+				await channel.setName(newName);
+			}
+
+			try {
+				await interaction.editReply(`Category \`${categoryName}\` renamed to \`${newName}\``);
+			} catch (error) {
+				if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+					console.error(error);
+				}
+			}
 		} else if (subcommand === 'delete') {
 			const categoryName = interaction.options.getString('name').toLowerCase();
 
@@ -226,6 +283,12 @@ module.exports = {
 					name: categoryName,
 				},
 			});
+
+			const channel = interaction.guild.channels.cache.find(channel => channel.name === categoryName);
+
+			if (channel) {
+				await channel.delete();
+			}
 
 			try {
 				await interaction.editReply(`Category \`${categoryName}\` deleted`);
