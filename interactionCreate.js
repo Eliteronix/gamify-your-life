@@ -18,6 +18,8 @@ module.exports = async function (interaction) {
 	}
 
 	if (interaction.isCommand()) {
+		let command = interaction.client.commands.get(interaction.commandName);
+
 		command.execute(interaction);
 	} else if (interaction.isAutocomplete()) {
 		const command = interaction.client.commands.get(interaction.commandName);
