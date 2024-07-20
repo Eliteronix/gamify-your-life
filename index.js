@@ -93,7 +93,7 @@ function readyDiscord() {
 				client.slashCommandData = data;
 				notDone = false;
 			} catch (error) {
-				console.error('bot.js | Set application commands' + error);
+				console.error('index.js | Set application commands' + error);
 			}
 		}
 	})();
@@ -113,7 +113,7 @@ async function executeProcessQueue(client) {
 	try {
 		await executeNextProcessQueueTask(client);
 	} catch (e) {
-		console.error('bot.js | executeNextProcessQueueTask ' + e);
+		console.error('index.js | executeNextProcessQueueTask ' + e);
 	}
 
 	setTimeout(() => {
