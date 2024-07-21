@@ -141,34 +141,32 @@ module.exports = {
 				)
 		),
 	async autocomplete(interaction) {
-		const focusedValue = interaction.options.getFocused();
+		const focusedValue = interaction.options.getFocused(true);
 
-		const categories = await DBCategories.findAll({
-			attributes: ['name'],
-			where: {
-				guildId: interaction.guild.id,
-			},
-			group: ['name'],
-		});
+		let filtered = [];
+		let filterTerm = null;
 
-		let autocompleteCategories = [];
-
-		categories.forEach(category => {
-			autocompleteCategories.push({
-				name: category.name,
-				creatorId: category.name,
+		if (focusedValue.name === 'category') {
+			const categories = await DBCategories.findAll({
+				attributes: ['name'],
+				where: {
+					guildId: interaction.guild.id,
+				},
+				group: ['name'],
 			});
-		});
 
-		let filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
+			filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
+
+			filterTerm = 'No categories found | Create a category first';
+		}
 
 		filtered = filtered.slice(0, 25);
 
 		if (filtered.length === 0) {
 			try {
 				await interaction.respond([{
-					name: 'No categories found | Create a category first',
-					value: 'No categories found | Create a category first',
+					name: filterTerm,
+					value: filterTerm,
 				}]);
 			} catch (error) {
 				if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {

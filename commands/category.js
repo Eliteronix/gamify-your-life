@@ -124,15 +124,6 @@ module.exports = {
 			group: ['name'],
 		});
 
-		let autocompleteCategories = [];
-
-		categories.forEach(category => {
-			autocompleteCategories.push({
-				name: category.name,
-				creatorId: category.name,
-			});
-		});
-
 		let filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
 
 		filtered = filtered.slice(0, 25);
