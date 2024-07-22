@@ -1,4 +1,4 @@
-const { DBCategories } = require('../dbObjects');
+const { DBCategories, DBTasks } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 
@@ -54,7 +54,6 @@ module.exports = {
 							'en-GB': 'The task category',
 							'en-US': 'The task category',
 						})
-						.setRequired(true)
 						.setAutocomplete(true)
 				)
 		)
@@ -155,9 +154,21 @@ module.exports = {
 				group: ['name'],
 			});
 
-			filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
+			filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.value.toLowerCase()));
 
 			filterTerm = 'No categories found | Create a category first';
+		} else if (focusedValue.name === 'task') {
+			const tasks = await DBTasks.findAll({
+				attributes: ['name'],
+				where: {
+					guildId: interaction.guild.id,
+				},
+				group: ['name'],
+			});
+
+			filtered = tasks.filter(choice => choice.name.toLowerCase().includes(focusedValue.value.toLowerCase()));
+
+			filterTerm = 'No tasks found | Create a task first';
 		}
 
 		filtered = filtered.slice(0, 25);
@@ -199,6 +210,27 @@ module.exports = {
 		const subcommand = interaction.options.getSubcommand();
 
 		if (subcommand === 'create') {
+			const taskName = interaction.options.getString('name').toLowerCase();
+
+			const task = await DBTasks.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: taskName,
+				},
+			});
+
+			if (task) {
+				try {
+					await interaction.editReply('Task already exists');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+
 		} else if (subcommand === 'update') {
 		} else if (subcommand === 'delete') {
 		}
