@@ -6,136 +6,65 @@ module.exports = {
 	name: 'task',
 	data: new SlashCommandBuilder()
 		.setName('task')
-		.setNameLocalizations({
-			'en-GB': 'task',
-			'en-US': 'task',
-		})
 		.setDescription('Create and delete task categories')
-		.setDescriptionLocalizations({
-			'en-GB': 'Create and delete task categories',
-			'en-US': 'Create and delete task categories',
-		})
 		.setDMPermission(false)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('create')
-				.setNameLocalizations({
-					'en-GB': 'create',
-					'en-US': 'create',
-				})
 				.setDescription('Create a new task')
-				.setDescriptionLocalizations({
-					'en-GB': 'Create a new task',
-					'en-US': 'Create a new task',
-				})
 				.addStringOption(option =>
 					option
 						.setName('name')
-						.setNameLocalizations({
-							'en-GB': 'name',
-							'en-US': 'name',
-						})
 						.setDescription('The name of the task')
-						.setDescriptionLocalizations({
-							'en-GB': 'The name of the task',
-							'en-US': 'The name of the task',
-						})
 						.setRequired(true)
 				)
 				.addStringOption(option =>
 					option
 						.setName('category')
-						.setNameLocalizations({
-							'en-GB': 'category',
-							'en-US': 'category',
-						})
 						.setDescription('The task category')
-						.setDescriptionLocalizations({
-							'en-GB': 'The task category',
-							'en-US': 'The task category',
-						})
 						.setAutocomplete(true)
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('type')
+						.setDescription('The type of the task')
+						.addChoices(
+							{ name: 'Checkbox', value: 1 },
+							{ name: 'Amount', value: 2 },
+						)
 				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('update')
-				.setNameLocalizations({
-					'en-GB': 'update',
-					'en-US': 'update',
-				})
 				.setDescription('Update a task')
-				.setDescriptionLocalizations({
-					'en-GB': 'Update a task',
-					'en-US': 'Update a task',
-				})
 				.addStringOption(option =>
 					option
 						.setName('task')
-						.setNameLocalizations({
-							'en-GB': 'task',
-							'en-US': 'task',
-						})
 						.setDescription('The task to update')
-						.setDescriptionLocalizations({
-							'en-GB': 'The task to update',
-							'en-US': 'The task to update',
-						})
 						.setRequired(true)
 						.setAutocomplete(true)
 				)
 				.addStringOption(option =>
 					option
 						.setName('name')
-						.setNameLocalizations({
-							'en-GB': 'name',
-							'en-US': 'name',
-						})
 						.setDescription('The new name of the task')
-						.setDescriptionLocalizations({
-							'en-GB': 'The new name of the task',
-							'en-US': 'The new name of the task',
-						})
 				)
 				.addStringOption(option =>
 					option
 						.setName('category')
-						.setNameLocalizations({
-							'en-GB': 'category',
-							'en-US': 'category',
-						})
 						.setDescription('The new category for the task')
-						.setDescriptionLocalizations({
-							'en-GB': 'The new category for the task',
-							'en-US': 'The new category for the task',
-						})
 						.setAutocomplete(true)
 				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('delete')
-				.setNameLocalizations({
-					'en-GB': 'delete',
-					'en-US': 'delete',
-				})
 				.setDescription('Delete a task')
-				.setDescriptionLocalizations({
-					'en-GB': 'Delete a task',
-					'en-US': 'Delete a task',
-				})
 				.addStringOption(option =>
 					option
 						.setName('task')
-						.setNameLocalizations({
-							'en-GB': 'task',
-							'en-US': 'task',
-						})
 						.setDescription('The task to delete')
-						.setDescriptionLocalizations({
-							'en-GB': 'The task to delete',
-							'en-US': 'The task to delete',
-						})
 						.setAutocomplete(true)
 				)
 		),
@@ -230,9 +159,57 @@ module.exports = {
 				return;
 			}
 
+			const categoryName = interaction.options.getString('category');
 
+			if (categoryName) {
+				const category = await DBCategories.findOne({
+					where: {
+						guildId: interaction.guild.id,
+						name: categoryName,
+					},
+				});
+
+				if (!category) {
+					try {
+						await interaction.editReply('Category does not exist');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+					return;
+				}
+			}
+
+			await DBTasks.create({
+				guildId: interaction.guild.id,
+				name: taskName,
+				category: categoryName,
+				type: interaction.options.getInteger('type'),
+			});
 		} else if (subcommand === 'update') {
 		} else if (subcommand === 'delete') {
+			const taskName = interaction.options.getString('task').toLowerCase();
+
+			const task = await DBTasks.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: taskName,
+				},
+			});
+
+			if (!task) {
+				try {
+					await interaction.editReply('Task does not exist');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			await task.destroy();
 		}
 	},
 };

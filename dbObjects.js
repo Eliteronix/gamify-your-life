@@ -33,9 +33,9 @@ const mainData = new Sequelize('database', 'username', 'password', {
 const DBProcessQueue = require('./models/DBProcessQueue')(processQueue, Sequelize.DataTypes);
 
 const DBCategories = require('./models/DBCategories')(mainData, Sequelize.DataTypes);
-const DBGuildSettings = require('./models/DBCategories')(mainData, Sequelize.DataTypes);
-const DBTaskCategories = require('./models/DBCategories')(mainData, Sequelize.DataTypes);
-const DBTasks = require('./models/DBCategories')(mainData, Sequelize.DataTypes);
+const DBGuildSettings = require('./models/DBGuildSettings')(mainData, Sequelize.DataTypes);
+const DBTaskCategories = require('./models/DBTaskCategories')(mainData, Sequelize.DataTypes);
+const DBTasks = require('./models/DBTasks')(mainData, Sequelize.DataTypes);
 
 module.exports = {
 	DBProcessQueue,

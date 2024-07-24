@@ -6,109 +6,45 @@ module.exports = {
 	name: 'category',
 	data: new SlashCommandBuilder()
 		.setName('category')
-		.setNameLocalizations({
-			'en-GB': 'category',
-			'en-US': 'category',
-		})
 		.setDescription('Create and delete task categories')
-		.setDescriptionLocalizations({
-			'en-GB': 'Create and delete task categories',
-			'en-US': 'Create and delete task categories',
-		})
 		.setDMPermission(false)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('create')
-				.setNameLocalizations({
-					'en-GB': 'create',
-					'en-US': 'create',
-				})
 				.setDescription('Create a new task category')
-				.setDescriptionLocalizations({
-					'en-GB': 'Create a new task category',
-					'en-US': 'Create a new task category',
-				})
 				.addStringOption(option =>
 					option
 						.setName('name')
-						.setNameLocalizations({
-							'en-GB': 'name',
-							'en-US': 'name',
-						})
 						.setDescription('The name of the task category')
-						.setDescriptionLocalizations({
-							'en-GB': 'The name of the task category',
-							'en-US': 'The name of the task category',
-						})
 						.setRequired(true)
 				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('rename')
-				.setNameLocalizations({
-					'en-GB': 'rename',
-					'en-US': 'rename',
-				})
 				.setDescription('Rename a task category')
-				.setDescriptionLocalizations({
-					'en-GB': 'Rename a task category',
-					'en-US': 'Rename a task category',
-				})
 				.addStringOption(option =>
 					option
 						.setName('name')
-						.setNameLocalizations({
-							'en-GB': 'name',
-							'en-US': 'name',
-						})
 						.setDescription('The name of the task category')
-						.setDescriptionLocalizations({
-							'en-GB': 'The name of the task category',
-							'en-US': 'The name of the task category',
-						})
 						.setRequired(true)
 						.setAutocomplete(true)
 				)
 				.addStringOption(option =>
 					option
 						.setName('new-name')
-						.setNameLocalizations({
-							'en-GB': 'new-name',
-							'en-US': 'new-name',
-						})
 						.setDescription('The new name of the task category')
-						.setDescriptionLocalizations({
-							'en-GB': 'The new name of the task category',
-							'en-US': 'The new name of the task category',
-						})
 						.setRequired(true)
 				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('delete')
-				.setNameLocalizations({
-					'en-GB': 'delete',
-					'en-US': 'delete',
-				})
 				.setDescription('Delete a task category')
-				.setDescriptionLocalizations({
-					'en-GB': 'Delete a task category',
-					'en-US': 'Delete a task category',
-				})
 				.addStringOption(option =>
 					option
 						.setName('name')
-						.setNameLocalizations({
-							'en-GB': 'name',
-							'en-US': 'name',
-						})
 						.setDescription('The name of the task category')
-						.setDescriptionLocalizations({
-							'en-GB': 'The name of the task category',
-							'en-US': 'The name of the task category',
-						})
 						.setRequired(true)
 						.setAutocomplete(true)
 				)
@@ -123,7 +59,6 @@ module.exports = {
 			},
 			group: ['name'],
 		});
-
 		let filtered = categories.filter(choice => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
 
 		filtered = filtered.slice(0, 25);
