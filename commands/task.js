@@ -10,8 +10,8 @@ module.exports = {
 		.setDMPermission(false)
 		.addSubcommand(subcommand =>
 			subcommand
-				.setName('create')
-				.setDescription('Create a new task')
+				.setName('create-checkbox')
+				.setDescription('Create a new checkbox task')
 				.addStringOption(option =>
 					option
 						.setName('name')
@@ -26,12 +26,40 @@ module.exports = {
 				)
 				.addIntegerOption(option =>
 					option
-						.setName('type')
-						.setDescription('The type of the task')
-						.addChoices(
-							{ name: 'Checkbox', value: 1 },
-							{ name: 'Amount', value: 2 },
-						)
+						.setName('reset-every-days')
+						.setDescription('The amount of days until the task resets')
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('reset-every-hours')
+						.setDescription('The amount of hours until the task resets')
+				)
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('create-amount')
+				.setDescription('Create a new amount task')
+				.addStringOption(option =>
+					option
+						.setName('name')
+						.setDescription('The name of the task')
+						.setRequired(true)
+				)
+				.addStringOption(option =>
+					option
+						.setName('category')
+						.setDescription('The task category')
+						.setAutocomplete(true)
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('amount')
+						.setDescription('The max amount for the task')
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('reductionPerHour')
+						.setDescription('The amount to reduce by every hour')
 				)
 		)
 		.addSubcommand(subcommand =>
@@ -138,7 +166,7 @@ module.exports = {
 
 		const subcommand = interaction.options.getSubcommand();
 
-		if (subcommand === 'create') {
+		if (subcommand === 'create-checkbox') {
 			const taskName = interaction.options.getString('name').toLowerCase();
 
 			const task = await DBTasks.findOne({
@@ -185,7 +213,8 @@ module.exports = {
 				guildId: interaction.guild.id,
 				name: taskName,
 				category: categoryName,
-				type: interaction.options.getInteger('type'),
+				type: 1,
+				date: new Date(),
 			});
 		} else if (subcommand === 'update') {
 		} else if (subcommand === 'delete') {

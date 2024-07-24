@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.DATE,
 		},
 		resetEveryHours: DataTypes.INTEGER,
+		resetEveryDays: DataTypes.INTEGER,
 	}, {
 		indexes: [
 			{
