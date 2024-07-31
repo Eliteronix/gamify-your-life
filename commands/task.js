@@ -216,6 +216,57 @@ module.exports = {
 				type: 1,
 				date: new Date(),
 			});
+		} else if (subcommand === 'create-amount') {
+			const taskName = interaction.options.getString('name').toLowerCase();
+
+			const task = await DBTasks.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: taskName,
+				},
+			});
+
+			if (task) {
+				try {
+					await interaction.editReply('Task already exists');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			const categoryName = interaction.options.getString('category');
+
+			if (categoryName) {
+				const category = await DBCategories.findOne({
+					where: {
+						guildId: interaction.guild.id,
+						name: categoryName,
+					},
+				});
+
+				if (!category) {
+					try {
+						await interaction.editReply('Category does not exist');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+					return;
+				}
+			}
+
+			await DBTasks.create({
+				guildId: interaction.guild.id,
+				name: taskName,
+				category: categoryName,
+				type: 2,
+				amount: interaction.options.getInteger('amount'),
+				reductionPerHour: interaction.options.getInteger('reductionPerHour'),
+			});
 		} else if (subcommand === 'update') {
 		} else if (subcommand === 'delete') {
 			const taskName = interaction.options.getString('task').toLowerCase();
