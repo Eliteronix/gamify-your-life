@@ -1,6 +1,5 @@
 const { DBCategories, DBTasks } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const Discord = require('discord.js');
 
 module.exports = {
 	name: 'task',
@@ -83,6 +82,26 @@ module.exports = {
 						.setName('category')
 						.setDescription('The new category for the task')
 						.setAutocomplete(true)
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('reset-every-days')
+						.setDescription('The amount of days until the task resets')
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('reset-every-hours')
+						.setDescription('The amount of hours until the task resets')
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('amount')
+						.setDescription('The max amount for the task')
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('reductionPerHour')
+						.setDescription('The amount to reduce by every hour')
 				)
 		)
 		.addSubcommand(subcommand =>
@@ -268,6 +287,118 @@ module.exports = {
 				reductionPerHour: interaction.options.getInteger('reductionPerHour'),
 			});
 		} else if (subcommand === 'update') {
+			const taskName = interaction.options.getString('task').toLowerCase();
+
+			const task = await DBTasks.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: taskName,
+				},
+			});
+
+			if (!task) {
+				try {
+					await interaction.editReply('Task does not exist');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			const name = interaction.options.getString('name');
+
+			if (name) {
+				task.name = name;
+			}
+
+			const categoryName = interaction.options.getString('category');
+
+			if (categoryName) {
+				const category = await DBCategories.findOne({
+					where: {
+						guildId: interaction.guild.id,
+						name: categoryName,
+					},
+				});
+
+				if (!category) {
+					try {
+						await interaction.followUp('Category does not exist and has not been updated');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+				} else {
+					task.category = categoryName;
+				}
+			}
+
+			const resetEveryDays = interaction.options.getInteger('reset-every-days');
+
+			if (resetEveryDays) {
+				if (task.type === 1) {
+					task.resetEveryDays = resetEveryDays;
+				} else {
+					try {
+						await interaction.followUp('Task is not a checkbox task and cannot be updated with reset-every-days');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+				}
+			}
+
+			const resetEveryHours = interaction.options.getInteger('reset-every-hours');
+
+			if (resetEveryHours) {
+				if (task.type === 1) {
+					task.resetEveryHours = resetEveryHours;
+				} else {
+					try {
+						await interaction.followUp('Task is not a checkbox task and cannot be updated with reset-every-hours');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+				}
+			}
+
+			const amount = interaction.options.getInteger('amount');
+
+			if (amount) {
+				if (task.type === 2) {
+					task.amount = amount;
+				} else {
+					try {
+						await interaction.followUp('Task is not an amount task and cannot be updated with amount');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+				}
+			}
+
+			const reductionPerHour = interaction.options.getInteger('reductionPerHour');
+
+			if (reductionPerHour) {
+				if (task.type === 2) {
+					task.reductionPerHour = reductionPerHour;
+				} else {
+					try {
+						await interaction.followUp('Task is not an amount task and cannot be updated with reduction-per-hour');
+					} catch (error) {
+						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+							console.error(error);
+						}
+					}
+				}
+			}
 		} else if (subcommand === 'delete') {
 			const taskName = interaction.options.getString('task').toLowerCase();
 
