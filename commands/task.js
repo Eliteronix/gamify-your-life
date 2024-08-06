@@ -341,6 +341,7 @@ module.exports = {
 			if (resetEveryDays) {
 				if (task.type === 1) {
 					task.resetEveryDays = resetEveryDays;
+					task.resetEveryHours = null;
 				} else {
 					try {
 						await interaction.followUp('Task is not a checkbox task and cannot be updated with reset-every-days');
@@ -357,6 +358,7 @@ module.exports = {
 			if (resetEveryHours) {
 				if (task.type === 1) {
 					task.resetEveryHours = resetEveryHours;
+					task.resetEveryDays = null;
 				} else {
 					try {
 						await interaction.followUp('Task is not a checkbox task and cannot be updated with reset-every-hours');
@@ -397,6 +399,16 @@ module.exports = {
 							console.error(error);
 						}
 					}
+				}
+			}
+
+			await task.save();
+
+			try {
+				await interaction.followUp('Task updated');
+			} catch (error) {
+				if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+					console.error(error);
 				}
 			}
 		} else if (subcommand === 'delete') {
