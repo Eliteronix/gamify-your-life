@@ -1,4 +1,4 @@
-const { DBProcessQueue } = require('./dbObjects');
+const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories } = require('./dbObjects');
 const { Op } = require('sequelize');
 
 module.exports = {
@@ -24,6 +24,27 @@ module.exports = {
 			break;
 		}
 	},
+	async updateGuildDisplay(guild) {
+		let categories = await DBCategories.findAll({
+			where: {
+				guildId: guild.id
+			}
+		});
+
+		let tasks = await DBTasks.findAll({
+			where: {
+				guildId: guild.id
+			}
+		});
+
+		let categoryNames = categories.map(c => c.name);
+
+		let taskCategoryConnections = await DBTaskCategories.findAll({
+			where: {
+				guildId: guild.id
+			}
+		});
+	}
 };
 
 async function executeFoundTask(client, nextTask) {

@@ -1,11 +1,12 @@
-const { DBCategories, DBTasks } = require('../dbObjects');
+const { DBCategories, DBTasks, DBTaskCategories } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { updateGuildDisplay } = require('../utils');
 
 module.exports = {
 	name: 'task',
 	data: new SlashCommandBuilder()
 		.setName('task')
-		.setDescription('Create and delete task categories')
+		.setDescription('Create, update and delete tasks')
 		.setDMPermission(false)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -16,12 +17,6 @@ module.exports = {
 						.setName('name')
 						.setDescription('The name of the task')
 						.setRequired(true)
-				)
-				.addStringOption(option =>
-					option
-						.setName('category')
-						.setDescription('The task category')
-						.setAutocomplete(true)
 				)
 				.addIntegerOption(option =>
 					option
@@ -43,12 +38,6 @@ module.exports = {
 						.setName('name')
 						.setDescription('The name of the task')
 						.setRequired(true)
-				)
-				.addStringOption(option =>
-					option
-						.setName('category')
-						.setDescription('The task category')
-						.setAutocomplete(true)
 				)
 				.addIntegerOption(option =>
 					option
@@ -76,12 +65,6 @@ module.exports = {
 					option
 						.setName('name')
 						.setDescription('The new name of the task')
-				)
-				.addStringOption(option =>
-					option
-						.setName('category')
-						.setDescription('The new category for the task')
-						.setAutocomplete(true)
 				)
 				.addIntegerOption(option =>
 					option
@@ -114,6 +97,40 @@ module.exports = {
 						.setDescription('The task to delete')
 						.setAutocomplete(true)
 				)
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('assign-category')
+				.setDescription('Assign a task to a (new) category')
+				.addStringOption(option =>
+					option
+						.setName('task')
+						.setDescription('The task to assign to a category')
+						.setAutocomplete(true)
+						.setRequired(true)
+				)
+				.addStringOption(option =>
+					option
+						.setName('category')
+						.setDescription('The category to assign the task to')
+						.setAutocomplete(true)
+						.setRequired(true)
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('weight')
+						.setDescription('The weight of the task in the category')
+						.setRequired(true)
+				)
+				.addIntegerOption(option =>
+					option
+						.setName('type')
+						.setDescription('The type of weight to use (Only applies to amount tasks)')
+						.setRequired(true)
+						.addChoices(
+							{ name: 'Absolute', value: 1 },
+							{ name: 'Relative', value: 2 },
+						))
 		),
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true);
@@ -206,32 +223,9 @@ module.exports = {
 				return;
 			}
 
-			const categoryName = interaction.options.getString('category');
-
-			if (categoryName) {
-				const category = await DBCategories.findOne({
-					where: {
-						guildId: interaction.guild.id,
-						name: categoryName,
-					},
-				});
-
-				if (!category) {
-					try {
-						await interaction.editReply('Category does not exist');
-					} catch (error) {
-						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
-							console.error(error);
-						}
-					}
-					return;
-				}
-			}
-
 			await DBTasks.create({
 				guildId: interaction.guild.id,
 				name: taskName,
-				category: categoryName,
 				type: 1,
 				date: new Date(),
 			});
@@ -256,32 +250,9 @@ module.exports = {
 				return;
 			}
 
-			const categoryName = interaction.options.getString('category');
-
-			if (categoryName) {
-				const category = await DBCategories.findOne({
-					where: {
-						guildId: interaction.guild.id,
-						name: categoryName,
-					},
-				});
-
-				if (!category) {
-					try {
-						await interaction.editReply('Category does not exist');
-					} catch (error) {
-						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
-							console.error(error);
-						}
-					}
-					return;
-				}
-			}
-
 			await DBTasks.create({
 				guildId: interaction.guild.id,
 				name: taskName,
-				category: categoryName,
 				type: 2,
 				amount: interaction.options.getInteger('amount'),
 				reductionPerHour: interaction.options.getInteger('reductionPerHour'),
@@ -311,29 +282,6 @@ module.exports = {
 
 			if (name) {
 				task.name = name;
-			}
-
-			const categoryName = interaction.options.getString('category');
-
-			if (categoryName) {
-				const category = await DBCategories.findOne({
-					where: {
-						guildId: interaction.guild.id,
-						name: categoryName,
-					},
-				});
-
-				if (!category) {
-					try {
-						await interaction.followUp('Category does not exist and has not been updated');
-					} catch (error) {
-						if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
-							console.error(error);
-						}
-					}
-				} else {
-					task.category = categoryName;
-				}
 			}
 
 			const resetEveryDays = interaction.options.getInteger('reset-every-days');
@@ -433,6 +381,65 @@ module.exports = {
 			}
 
 			await task.destroy();
+		} else if (subcommand === 'assign-category') {
+			const taskName = interaction.options.getString('task').toLowerCase();
+
+			const task = await DBTasks.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: taskName,
+				},
+			});
+
+			if (!task) {
+				try {
+					await interaction.editReply('Task does not exist');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			const categoryName = interaction.options.getString('category');
+
+			const category = await DBCategories.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: categoryName,
+				},
+			});
+
+			if (!category) {
+				try {
+					await interaction.followUp('Category does not exist and has not been updated');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			} else {
+				task.category = categoryName;
+			}
+
+			await DBTaskCategories.destroy({
+				where: {
+					guildId: interaction.guild.id,
+					taskId: task.id,
+				},
+			});
+
+			await DBTaskCategories.create({
+				guildId: interaction.guild.id,
+				categoryId: category.id,
+				taskId: task.id,
+				weight: interaction.options.getInteger('weight'),
+				type: interaction.options.getInteger('type'),
+			});
 		}
+
+		updateGuildDisplay(interaction.guild);
 	},
 };
