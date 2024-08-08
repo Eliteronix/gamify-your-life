@@ -37,13 +37,17 @@ module.exports = {
 			}
 		});
 
-		let categoryNames = categories.map(c => c.name);
+		let categoryNames = categories.map(c => c.name).sort();
+
+		categoryNames.unshift('uncategorized');
 
 		let taskCategoryConnections = await DBTaskCategories.findAll({
 			where: {
 				guildId: guild.id
 			}
 		});
+
+
 	}
 };
 
