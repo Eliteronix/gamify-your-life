@@ -131,6 +131,25 @@ module.exports = {
 							{ name: 'Absolute', value: 1 },
 							{ name: 'Relative', value: 2 },
 						))
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('remove-category')
+				.setDescription('Remove a task from a category')
+				.addStringOption(option =>
+					option
+						.setName('task')
+						.setDescription('The task to remove from a category')
+						.setAutocomplete(true)
+						.setRequired(true)
+				)
+				.addStringOption(option =>
+					option
+						.setName('category')
+						.setDescription('The category to remove the task from')
+						.setAutocomplete(true)
+						.setRequired(true)
+				)
 		),
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true);
@@ -420,13 +439,12 @@ module.exports = {
 					}
 				}
 				return;
-			} else {
-				task.category = categoryName;
 			}
 
 			await DBTaskCategories.destroy({
 				where: {
 					guildId: interaction.guild.id,
+					categoryId: category.id,
 					taskId: task.id,
 				},
 			});
@@ -437,6 +455,54 @@ module.exports = {
 				taskId: task.id,
 				weight: interaction.options.getInteger('weight'),
 				type: interaction.options.getInteger('type'),
+			});
+		} else if (subcommand === 'remove-category') {
+			const taskName = interaction.options.getString('task').toLowerCase();
+
+			const task = await DBTasks.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: taskName,
+				},
+			});
+
+			if (!task) {
+				try {
+					await interaction.editReply('Task does not exist');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			const categoryName = interaction.options.getString('category');
+
+			const category = await DBCategories.findOne({
+				where: {
+					guildId: interaction.guild.id,
+					name: categoryName,
+				},
+			});
+
+			if (!category) {
+				try {
+					await interaction.followUp('Category does not exist and has not been updated');
+				} catch (error) {
+					if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+						console.error(error);
+					}
+				}
+				return;
+			}
+
+			await DBTaskCategories.destroy({
+				where: {
+					guildId: interaction.guild.id,
+					categoryId: category.id,
+					taskId: task.id,
+				},
 			});
 		}
 
