@@ -47,7 +47,36 @@ module.exports = {
 			}
 		});
 
+		// Create open and done discord categories
+		let openCategory = guild.channels.cache.find(c => c.name === 'open');
 
+		if (!openCategory) {
+			openCategory = await guild.channels.create('open', {
+				type: 'GUILD_CATEGORY'
+			});
+		}
+
+		let doneCategory = guild.channels.cache.find(c => c.name === 'done');
+
+		if (!doneCategory) {
+			doneCategory = await guild.channels.create('done', {
+				type: 'GUILD_CATEGORY'
+			});
+		}
+
+		// Create category channels under open and done
+		let categoryChannels = guild.channels.cache.filter(c => c.type === 'GUILD_TEXT');
+
+		for (let i = 0; i < categoryNames.length; i++) {
+			let doneCategoryChannel = categoryChannels.find(c => c.name === categoryNames[i]);
+
+			if (!category) {
+				category = await guild.channels.create(categoryNames[i], {
+					type: 'GUILD_TEXT',
+					parent: openCategory
+				});
+			}
+		}
 	}
 };
 
