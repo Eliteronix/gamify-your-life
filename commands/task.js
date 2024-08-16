@@ -46,7 +46,7 @@ module.exports = {
 				)
 				.addIntegerOption(option =>
 					option
-						.setName('reductionPerHour')
+						.setName('reduction-per-hour')
 						.setDescription('The amount to reduce by every hour')
 				)
 		)
@@ -83,7 +83,7 @@ module.exports = {
 				)
 				.addIntegerOption(option =>
 					option
-						.setName('reductionPerHour')
+						.setName('reduction-per-hour')
 						.setDescription('The amount to reduce by every hour')
 				)
 		)
@@ -274,7 +274,7 @@ module.exports = {
 				name: taskName,
 				type: 2,
 				amount: interaction.options.getInteger('amount'),
-				reductionPerHour: interaction.options.getInteger('reductionPerHour'),
+				reductionPerHour: interaction.options.getInteger('reduction-per-hour'),
 			});
 		} else if (subcommand === 'update') {
 			const taskName = interaction.options.getString('task').toLowerCase();
@@ -353,7 +353,7 @@ module.exports = {
 				}
 			}
 
-			const reductionPerHour = interaction.options.getInteger('reductionPerHour');
+			const reductionPerHour = interaction.options.getInteger('reduction-per-hour');
 
 			if (reductionPerHour) {
 				if (task.type === 2) {

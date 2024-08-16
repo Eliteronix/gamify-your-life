@@ -65,7 +65,9 @@ module.exports = {
 		}
 
 		// Create category channels under open and done
-		let categoryChannels = guild.channels.cache.filter(c => c.type === 'GUILD_TEXT');
+		let openCategoryChannels = openCategory.channels.cache.filter(c => c.type === 'GUILD_TEXT');
+
+		let doneCategoryChannels = doneCategory.channels.cache.filter(c => c.type === 'GUILD_TEXT');
 
 		for (let i = 0; i < categoryNames.length; i++) {
 			let doneCategoryChannel = categoryChannels.find(c => c.name === categoryNames[i]);
