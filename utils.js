@@ -42,6 +42,10 @@ module.exports = {
 
 		categoryNames.unshift('uncategorized');
 
+		for (let i = 0; i < tasks.length; i++) {
+			categoryNames[i] = categoryNames[i].replace(/ +/gm, '-').toLowerCase();
+		}
+
 		let taskCategoryConnections = await DBTaskCategories.findAll({
 			where: {
 				guildId: guild.id
@@ -80,6 +84,16 @@ module.exports = {
 					name: categoryNames[i],
 					type: ChannelType.GuildText,
 					parent: openCategory
+				});
+			}
+
+			let doneCategoryChannel = doneCategoryChannels.find(c => c.name === categoryNames[i]);
+
+			if (!doneCategoryChannel) {
+				doneCategoryChannel = await guild.channels.create({
+					name: categoryNames[i],
+					type: ChannelType.GuildText,
+					parent: doneCategory
 				});
 			}
 		}

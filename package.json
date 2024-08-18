@@ -1,25 +1,27 @@
 {
-  "name": "gamify-your-life",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Eliteronix/gamify-your-life.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Eliteronix/gamify-your-life/issues"
-  },
-  "homepage": "https://github.com/Eliteronix/gamify-your-life#readme",
-  "dependencies": {
-    "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5",
-    "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7"
-  }
+	"name": "gamify-your-life",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node --unhandled-rejections=warn index.js",
+		"debug": "node --unhandled-rejections=warn index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Eliteronix/gamify-your-life.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Eliteronix/gamify-your-life/issues"
+	},
+	"homepage": "https://github.com/Eliteronix/gamify-your-life#readme",
+	"dependencies": {
+		"discord.js": "^14.15.3",
+		"dotenv": "^16.4.5",
+		"sequelize": "^6.37.3",
+		"sqlite3": "^5.1.7"
+	}
 }
