@@ -248,6 +248,8 @@ module.exports = {
 				type: 1,
 				date: new Date(),
 			});
+
+			await interaction.followUp(`Task \`${taskName}\` has been created`);
 		} else if (subcommand === 'create-amount') {
 			const taskName = interaction.options.getString('name').toLowerCase();
 
@@ -276,6 +278,8 @@ module.exports = {
 				amount: interaction.options.getInteger('amount'),
 				reductionPerHour: interaction.options.getInteger('reduction-per-hour'),
 			});
+
+			await interaction.followUp(`Task \`${taskName}\` has been created`);
 		} else if (subcommand === 'update') {
 			const taskName = interaction.options.getString('task').toLowerCase();
 
@@ -400,6 +404,8 @@ module.exports = {
 			}
 
 			await task.destroy();
+
+			await interaction.editReply(`Task \`${taskName}\` has been deleted`);
 		} else if (subcommand === 'assign-category') {
 			const taskName = interaction.options.getString('task').toLowerCase();
 
@@ -456,6 +462,8 @@ module.exports = {
 				weight: interaction.options.getInteger('weight'),
 				type: interaction.options.getInteger('type'),
 			});
+
+			await interaction.followUp(`Task \`${taskName}\` has been assigned to the category \`${categoryName}\` with a weight of ${interaction.options.getInteger('weight')}`);
 		} else if (subcommand === 'remove-category') {
 			const taskName = interaction.options.getString('task').toLowerCase();
 
@@ -504,6 +512,8 @@ module.exports = {
 					taskId: task.id,
 				},
 			});
+
+			await interaction.followUp(`Task \`${taskName}\` has been removed from the category \`${categoryName}\``);
 		}
 
 		updateGuildDisplay(interaction.guild);
