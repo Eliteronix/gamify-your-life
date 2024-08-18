@@ -1,5 +1,6 @@
 const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories } = require('./dbObjects');
 const { Op } = require('sequelize');
+const { ChannelType } = require('discord.js');
 
 module.exports = {
 	executeNextProcessQueueTask: async function (client) {
@@ -51,30 +52,33 @@ module.exports = {
 		let openCategory = guild.channels.cache.find(c => c.name === 'open');
 
 		if (!openCategory) {
-			openCategory = await guild.channels.create('open', {
-				type: 'GUILD_CATEGORY'
+			openCategory = await guild.channels.create({
+				name: 'open',
+				type: ChannelType.GuildCategory
 			});
 		}
 
 		let doneCategory = guild.channels.cache.find(c => c.name === 'done');
 
 		if (!doneCategory) {
-			doneCategory = await guild.channels.create('done', {
-				type: 'GUILD_CATEGORY'
+			doneCategory = await guild.channels.create({
+				name: 'done',
+				type: ChannelType.GuildCategory
 			});
 		}
 
 		// Create category channels under open and done
-		let openCategoryChannels = openCategory.channels.cache.filter(c => c.type === 'GUILD_TEXT');
+		let openCategoryChannels = openCategory.children.cache.filter(c => c.type === ChannelType.GuildText);
 
-		let doneCategoryChannels = doneCategory.channels.cache.filter(c => c.type === 'GUILD_TEXT');
+		let doneCategoryChannels = doneCategory.children.cache.filter(c => c.type === ChannelType.GuildText);
 
 		for (let i = 0; i < categoryNames.length; i++) {
-			let doneCategoryChannel = categoryChannels.find(c => c.name === categoryNames[i]);
+			let openCategoryChannel = openCategoryChannels.find(c => c.name === categoryNames[i]);
 
-			if (!category) {
-				category = await guild.channels.create(categoryNames[i], {
-					type: 'GUILD_TEXT',
+			if (!openCategoryChannel) {
+				openCategoryChannel = await guild.channels.create({
+					name: categoryNames[i],
+					type: ChannelType.GuildText,
 					parent: openCategory
 				});
 			}
