@@ -42,7 +42,7 @@ module.exports = {
 
 		categoryNames.unshift('uncategorized');
 
-		for (let i = 0; i < tasks.length; i++) {
+		for (let i = 0; i < categoryNames.length; i++) {
 			categoryNames[i] = categoryNames[i].replace(/ +/gm, '-').toLowerCase();
 		}
 
