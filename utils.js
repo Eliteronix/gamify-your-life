@@ -77,6 +77,16 @@ module.exports = {
 		let doneCategoryChannels = doneCategory.children.cache.filter(c => c.type === ChannelType.GuildText);
 
 		for (let i = 0; i < categoryNames.length; i++) {
+			let tasksInCategory = [];
+
+			if (categoryNames[i] === 'uncategorized') {
+				tasksInCategory = tasks.filter(t => taskCategoryConnections.filter(tc => tc.taskId === t.id).length === 0);
+			} else {
+				let categoryId = categories.find(c => c.name.replace(/ +/gm, '-').toLowerCase() === categoryNames[i]).id;
+
+				tasksInCategory = tasks.filter(t => taskCategoryConnections.find(tc => tc.taskId === t.id && tc.categoryId === categoryId));
+			}
+
 			let openCategoryChannel = openCategoryChannels.find(c => c.name === categoryNames[i]);
 
 			if (!openCategoryChannel) {
@@ -87,6 +97,19 @@ module.exports = {
 				});
 			}
 
+			let openCategoryTasks = tasksInCategory.filter(t => !t.done);
+
+			for (let j = 0; j < openCategoryTasks.length; j++) {
+				switch (openCategoryTasks[j].type) {
+					case 1:
+						openCategoryChannel.send(`**${openCategoryTasks[j].name}**`);
+						break;
+					case 2:
+						openCategoryChannel.send(`**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`);
+				}
+
+			}
+
 			let doneCategoryChannel = doneCategoryChannels.find(c => c.name === categoryNames[i]);
 
 			if (!doneCategoryChannel) {
@@ -95,6 +118,18 @@ module.exports = {
 					type: ChannelType.GuildText,
 					parent: doneCategory
 				});
+			}
+
+			let doneCategoryTasks = tasksInCategory.filter(t => t.done);
+
+			for (let j = 0; j < doneCategoryTasks.length; j++) {
+				switch (doneCategoryTasks[j].type) {
+					case 1:
+						doneCategoryChannel.send(`**${doneCategoryTasks[j].name}**`);
+						break;
+					case 2:
+						doneCategoryChannel.send(`**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount}`);
+				}
 			}
 		}
 	}
