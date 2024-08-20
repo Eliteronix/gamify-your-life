@@ -99,15 +99,33 @@ module.exports = {
 
 			let openCategoryTasks = tasksInCategory.filter(t => !t.done);
 
+			let openCategoryMessages = await openCategoryChannel.messages.fetch();
+
 			for (let j = 0; j < openCategoryTasks.length; j++) {
+				let messageToSend = '';
+
 				switch (openCategoryTasks[j].type) {
 					case 1:
-						openCategoryChannel.send(`**${openCategoryTasks[j].name}**`);
+						messageToSend = `**${openCategoryTasks[j].name}**`;
 						break;
 					case 2:
-						openCategoryChannel.send(`**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`);
+						messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`;
 				}
 
+				let openCategoryMessage = openCategoryMessages.find(m => m.content === messageToSend);
+
+				// Remove the message from the array so we can check if we need to delete it later
+				openCategoryMessages = openCategoryMessages.filter(m => m.content !== messageToSend);
+
+
+				if (!openCategoryMessage) {
+					openCategoryMessage = await openCategoryChannel.send(messageToSend);
+				}
+			}
+
+			// Delete any messages that are left in the array
+			for (let j = 0; j < openCategoryMessages.length; j++) {
+				await openCategoryMessages[j].delete();
 			}
 
 			let doneCategoryChannel = doneCategoryChannels.find(c => c.name === categoryNames[i]);
@@ -122,14 +140,33 @@ module.exports = {
 
 			let doneCategoryTasks = tasksInCategory.filter(t => t.done);
 
+			let doneCategoryMessages = await doneCategoryChannel.messages.fetch();
+
 			for (let j = 0; j < doneCategoryTasks.length; j++) {
+				let messageToSend = '';
+
 				switch (doneCategoryTasks[j].type) {
 					case 1:
-						doneCategoryChannel.send(`**${doneCategoryTasks[j].name}**`);
+						messageToSend = `**${doneCategoryTasks[j].name}**`;
+
 						break;
 					case 2:
-						doneCategoryChannel.send(`**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount}`);
+						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount}`;
 				}
+
+				let doneCategoryMessage = doneCategoryMessages.find(m => m.content === messageToSend);
+
+				// Remove the message from the array so we can check if we need to delete it later
+				doneCategoryMessages = doneCategoryMessages.filter(m => m.content !== messageToSend);
+
+				if (!doneCategoryMessage) {
+					doneCategoryMessage = await doneCategoryChannel.send(messageToSend);
+				}
+			}
+
+			// Delete any messages that are left in the array
+			for (let j = 0; j < doneCategoryMessages.length; j++) {
+				await doneCategoryMessages[j].delete();
 			}
 		}
 	}
