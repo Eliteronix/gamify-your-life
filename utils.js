@@ -124,8 +124,8 @@ module.exports = {
 			}
 
 			// Delete any messages that are left in the array
-			for (let j = 0; j < openCategoryMessages.length; j++) {
-				await openCategoryMessages[j].delete();
+			for (const [key, value] of openCategoryMessages) {
+				await value.delete();
 			}
 
 			let doneCategoryChannel = doneCategoryChannels.find(c => c.name === categoryNames[i]);
@@ -165,8 +165,8 @@ module.exports = {
 			}
 
 			// Delete any messages that are left in the array
-			for (let j = 0; j < doneCategoryMessages.length; j++) {
-				await doneCategoryMessages[j].delete();
+			for (const [key, value] of doneCategoryMessages) {
+				await value.delete();
 			}
 		}
 	}
