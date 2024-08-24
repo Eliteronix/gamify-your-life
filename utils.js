@@ -120,6 +120,8 @@ module.exports = {
 
 				if (!openCategoryMessage) {
 					openCategoryMessage = await openCategoryChannel.send(messageToSend);
+
+					openCategoryMessage.react('✅');
 				}
 			}
 
@@ -161,6 +163,8 @@ module.exports = {
 
 				if (!doneCategoryMessage) {
 					doneCategoryMessage = await doneCategoryChannel.send(messageToSend);
+
+					doneCategoryMessage.react('🔄');
 				}
 			}
 
