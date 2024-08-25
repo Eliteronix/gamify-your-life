@@ -14,6 +14,7 @@ module.exports = {
 				.setName('name')
 				.setDescription('The name of the task')
 				.setRequired(true)
+				.setAutocomplete(true),
 		),
 	async autocomplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true);
@@ -22,6 +23,7 @@ module.exports = {
 			attributes: ['name'],
 			where: {
 				guildId: interaction.guild.id,
+				done: false,
 			},
 			group: ['name'],
 		});
@@ -64,7 +66,31 @@ module.exports = {
 			return;
 		}
 
+		const taskName = interaction.options.getString('name').toLowerCase();
 
+		const task = await DBTasks.findOne({
+			where: {
+				guildId: interaction.guild.id,
+				name: taskName,
+			},
+		});
+
+		if (!task) {
+			try {
+				await interaction.editReply('Task does not exist');
+			} catch (error) {
+				if (error.message !== 'Unknown interaction' && error.message !== 'The reply to this interaction has already been sent or deferred.') {
+					console.error(error);
+				}
+			}
+			return;
+		}
+
+		task.done = true;
+		task.date = new Date();
+		await task.save();
+
+		await interaction.editReply(`Task \`${taskName}\` marked as done`);
 
 		updateGuildDisplay(interaction.guild);
 	},

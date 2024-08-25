@@ -13,7 +13,10 @@ module.exports = (sequelize, DataTypes) => {
 		type: DataTypes.INTEGER,
 		amount: DataTypes.INTEGER,
 		reductionPerHour: DataTypes.INTEGER,
-		done: DataTypes.BOOLEAN,
+		done: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 		date: {
 			type: DataTypes.DATE,
 		},
