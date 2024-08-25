@@ -23,5 +23,8 @@
 		"dotenv": "^16.4.5",
 		"sequelize": "^6.37.3",
 		"sqlite3": "^5.1.7"
+	},
+	"devDependencies": {
+		"eslint": "^9.9.1"
 	}
 }
