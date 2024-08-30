@@ -33,7 +33,7 @@ const client = new Discord.Client({
 const interactionCreate = require('./interactionCreate');
 
 //Get executeNextProcessQueueTask
-const { executeNextProcessQueueTask } = require('./utils');
+const { executeNextProcessQueueTask, reopenRelevantTasks } = require('./utils');
 
 //login with the Discord client using the Token from the .env file
 client.login(process.env.BOTTOKEN);
@@ -100,6 +100,7 @@ function readyDiscord() {
 
 	setTimeout(() => {
 		executeProcessQueue(client);
+		reopenTasks(client);
 	}, 60000);
 }
 
@@ -119,4 +120,16 @@ async function executeProcessQueue(client) {
 	setTimeout(() => {
 		executeProcessQueue(client);
 	}, 650);
+}
+
+async function reopenTasks(client) {
+	try {
+		await reopenRelevantTasks(client);
+	} catch (e) {
+		console.error('index.js | reopenRelevantTasks ' + e);
+	}
+
+	setTimeout(() => {
+		reopenTasks(client);
+	}, 60000);
 }

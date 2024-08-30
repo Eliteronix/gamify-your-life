@@ -106,10 +106,10 @@ module.exports = {
 
 				switch (openCategoryTasks[j].type) {
 					case 1:
-						messageToSend = `**${openCategoryTasks[j].name}** - <t:${parseInt(openCategoryTasks[j].date.getTime() / 1000)}:R>`;
+						messageToSend = `**${openCategoryTasks[j].name}** - <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 						break;
 					case 2:
-						messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount} - <t:${parseInt(openCategoryTasks[j].date.getTime() / 1000)}:R>`;
+						messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount} - <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				}
 
 				let openCategoryMessage = openCategoryMessages.find(m => m.content === messageToSend);
@@ -149,10 +149,10 @@ module.exports = {
 
 				switch (doneCategoryTasks[j].type) {
 					case 1:
-						messageToSend = `**${doneCategoryTasks[j].name}** - <t:${parseInt(doneCategoryTasks[j].date.getTime() / 1000)}:R>`;
+						messageToSend = `**${doneCategoryTasks[j].name}** - <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
 						break;
 					case 2:
-						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - <t:${parseInt(doneCategoryTasks[j].date.getTime() / 1000)}:R>`;
+						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
 				}
 
 				let doneCategoryMessage = doneCategoryMessages.find(m => m.content === messageToSend);
@@ -172,6 +172,9 @@ module.exports = {
 				await value.delete();
 			}
 		}
+	},
+	async reopenRelevantTasks(client) {
+
 	}
 };
 

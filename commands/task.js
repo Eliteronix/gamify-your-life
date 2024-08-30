@@ -246,7 +246,7 @@ module.exports = {
 				guildId: interaction.guild.id,
 				name: taskName,
 				type: 1,
-				date: new Date(),
+				dateReopen: new Date(),
 			});
 
 			await interaction.followUp(`Task \`${taskName}\` has been created`);

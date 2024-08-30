@@ -87,7 +87,7 @@ module.exports = {
 		}
 
 		task.done = true;
-		task.date = new Date();
+		task.dateLastDone = new Date();
 		await task.save();
 
 		await interaction.editReply(`Task \`${taskName}\` marked as done`);

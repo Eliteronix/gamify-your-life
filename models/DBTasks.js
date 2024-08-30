@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.BOOLEAN,
 			defaultValue: false,
 		},
-		date: {
+		dateLastDone: {
+			type: DataTypes.DATE,
+		},
+		dateReopen: {
 			type: DataTypes.DATE,
 		},
 		resetEveryHours: DataTypes.INTEGER,
