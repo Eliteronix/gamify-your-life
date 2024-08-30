@@ -150,7 +150,6 @@ module.exports = {
 				switch (doneCategoryTasks[j].type) {
 					case 1:
 						messageToSend = `**${doneCategoryTasks[j].name}** - <t:${parseInt(doneCategoryTasks[j].date.getTime() / 1000)}:R>`;
-
 						break;
 					case 2:
 						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - <t:${parseInt(doneCategoryTasks[j].date.getTime() / 1000)}:R>`;
