@@ -106,10 +106,20 @@ module.exports = {
 
 				switch (openCategoryTasks[j].type) {
 					case 1:
-						messageToSend = `**${openCategoryTasks[j].name}** - <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+						messageToSend = `**${openCategoryTasks[j].name}**`;
 						break;
 					case 2:
-						messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount} - <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+						messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`;
+				}
+
+				if (openCategoryTasks[j].dateLastDone) {
+					messageToSend = messageToSend + ` - last done <t:${parseInt(openCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+				}
+
+				if (openCategoryTasks[j].dateReopen) {
+					messageToSend = messageToSend + ` - reopened <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+				} else {
+					messageToSend = messageToSend + ` - Did not reopen automatically`;
 				}
 
 				let openCategoryMessage = openCategoryMessages.find(m => m.content === messageToSend);
@@ -149,10 +159,16 @@ module.exports = {
 
 				switch (doneCategoryTasks[j].type) {
 					case 1:
-						messageToSend = `**${doneCategoryTasks[j].name}** - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R> - Reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+						messageToSend = `**${doneCategoryTasks[j].name}** - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
 						break;
 					case 2:
-						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R> - Reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+				}
+
+				if (openCategoryTasks[j].dateReopen) {
+					messageToSend = messageToSend + ` - reopens <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+				} else {
+					messageToSend = messageToSend + ` - Does not reopen automatically`;
 				}
 
 				let doneCategoryMessage = doneCategoryMessages.find(m => m.content === messageToSend);
