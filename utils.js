@@ -1,4 +1,4 @@
-const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories } = require('./dbObjects');
+const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories, DBGuildSettings } = require('./dbObjects');
 const { Op } = require('sequelize');
 const { ChannelType } = require('discord.js');
 
@@ -165,8 +165,8 @@ module.exports = {
 						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
 				}
 
-				if (openCategoryTasks[j].dateReopen) {
-					messageToSend = messageToSend + ` - reopens <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
+				if (doneCategoryTasks[j].dateReopen) {
+					messageToSend = messageToSend + ` - reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				} else {
 					messageToSend = messageToSend + ` - Does not reopen automatically`;
 				}
@@ -213,6 +213,49 @@ module.exports = {
 
 			await module.exports.updateGuildDisplay(guild);
 		}
+	},
+	async markTaskAsDone(task, guildId) {
+		task.done = true;
+		task.dateLastDone = new Date();
+
+		task.dateReopen = new Date();
+
+		if (task.resetEveryHours) {
+			task.dateReopen.setHours(task.dateReopen.getHours() + task.resetEveryHours);
+		} else if (task.resetEveryDays) {
+			let guildSettings = await DBGuildSettings.findOne({
+				attributes: ['dailyResetTime'],
+				where: {
+					guildId: guildId,
+				},
+			});
+
+			if (!guildSettings) {
+				guildSettings = await DBGuildSettings.create({
+					guildId: guildId,
+					dailyResetTime: 5,
+				});
+			}
+
+			task.dateReopen = new Date();
+
+			task.dateReopen.setMinutes(0);
+			task.dateReopen.setSeconds(0);
+			task.dateReopen.setMilliseconds(0);
+
+			task.dateReopen.setUTCHours(guildSettings.dailyResetTime);
+
+			// If the reset time is in the future, set it to the previous day
+			if (task.dateReopen > new Date()) {
+				task.dateReopen.setDate(task.dateReopen.getDate() - 1);
+			}
+
+			task.dateReopen.setDate(task.dateReopen.getDate() + task.resetEveryDays);
+		} else {
+			task.dateReopen = null;
+		}
+
+		await task.save();
 	}
 };
 

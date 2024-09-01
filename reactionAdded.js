@@ -1,3 +1,6 @@
+const { DBTasks } = require('./dbObjects');
+const { markTaskAsDone, updateGuildDisplay } = require('./utils');
+
 module.exports = async function (reaction, user) {
 	if (reaction.partial) {
 		try {
@@ -19,8 +22,25 @@ module.exports = async function (reaction, user) {
 
 	if (user.bot) return;
 
-	if (reaction.emoji.name === '✅') {
+	if (reaction.message.author.id !== reaction.message.client.user.id) return;
 
+	if (reaction.emoji.name === '✅') {
+		let taskName = reaction.message.content.replace('**', '').replace(/\*\*.+/gm, '');
+
+		let task = await DBTasks.findOne({
+			where: {
+				name: taskName,
+			},
+		});
+
+		if (!task) {
+			console.error('reactionAdded.js | Task not found');
+			return;
+		}
+
+		await markTaskAsDone(task, reaction.message.guild.id);
+
+		updateGuildDisplay(reaction.message.guild);
 	}
 
 	if (reaction.emoji.name === '🔄') {
