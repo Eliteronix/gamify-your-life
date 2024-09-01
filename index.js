@@ -32,6 +32,9 @@ const client = new Discord.Client({
 //Get interactionCreate
 const interactionCreate = require('./interactionCreate');
 
+//Get reactionAdded
+const reactionAdded = require('./reactionAdded');
+
 //Get executeNextProcessQueueTask
 const { executeNextProcessQueueTask, reopenRelevantTasks } = require('./utils');
 
@@ -107,6 +110,8 @@ function readyDiscord() {
 client.on('interactionCreate', interaction => {
 	interactionCreate(interaction);
 });
+
+client.on('messageReactionAdd', reactionAdded);
 
 client.on('error', console.error);
 
