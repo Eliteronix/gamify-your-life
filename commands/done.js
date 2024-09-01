@@ -122,6 +122,8 @@ module.exports = {
 			}
 
 			task.dateReopen.setDate(task.dateReopen.getDate() + task.resetEveryDays);
+		} else {
+			task.dateReopen = null;
 		}
 
 		await task.save();

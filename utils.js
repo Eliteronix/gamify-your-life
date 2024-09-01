@@ -149,10 +149,10 @@ module.exports = {
 
 				switch (doneCategoryTasks[j].type) {
 					case 1:
-						messageToSend = `**${doneCategoryTasks[j].name}** - <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+						messageToSend = `**${doneCategoryTasks[j].name}** - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R> - Reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 						break;
 					case 2:
-						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R> - Reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				}
 
 				let doneCategoryMessage = doneCategoryMessages.find(m => m.content === messageToSend);
@@ -174,7 +174,29 @@ module.exports = {
 		}
 	},
 	async reopenRelevantTasks(client) {
+		let tasks = await DBTasks.findAll({
+			attributes: ['id', 'guildId'],
+			where: {
+				dateReopen: {
+					[Op.lt]: new Date()
+				},
+				done: true
+			}
+		});
 
+		for (let i = 0; i < tasks.length; i++) {
+			tasks[i].done = false;
+
+			await tasks[i].save();
+		}
+
+		let guildsToUpdate = [...new Set(tasks.map(t => t.guildId))];
+
+		for (let i = 0; i < guildsToUpdate.length; i++) {
+			let guild = await client.guilds.fetch(guildsToUpdate[i]);
+
+			await module.exports.updateGuildDisplay(guild);
+		}
 	}
 };
 
