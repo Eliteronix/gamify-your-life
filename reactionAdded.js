@@ -44,6 +44,23 @@ module.exports = async function (reaction, user) {
 	}
 
 	if (reaction.emoji.name === '🔄') {
+		let taskName = reaction.message.content.replace('**', '').replace(/\*\*.+/gm, '');
 
+		let task = await DBTasks.findOne({
+			where: {
+				name: taskName,
+			},
+		});
+
+		if (!task) {
+			console.error('reactionAdded.js | Task not found');
+			return;
+		}
+
+		task.done = false;
+
+		await task.save();
+
+		updateGuildDisplay(reaction.message.guild);
 	}
 };
