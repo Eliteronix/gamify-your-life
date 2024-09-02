@@ -119,7 +119,7 @@ module.exports = {
 				if (openCategoryTasks[j].dateReopen) {
 					messageToSend = messageToSend + ` - reopened <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				} else {
-					messageToSend = messageToSend + ` - Did not reopen automatically`;
+					messageToSend = messageToSend + ' - Did not reopen automatically';
 				}
 
 				let openCategoryMessage = openCategoryMessages.find(m => m.content === messageToSend);
@@ -168,7 +168,7 @@ module.exports = {
 				if (doneCategoryTasks[j].dateReopen) {
 					messageToSend = messageToSend + ` - reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				} else {
-					messageToSend = messageToSend + ` - Does not reopen automatically`;
+					messageToSend = messageToSend + ' - Does not reopen automatically';
 				}
 
 				let doneCategoryMessage = doneCategoryMessages.find(m => m.content === messageToSend);
