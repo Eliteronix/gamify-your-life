@@ -104,12 +104,10 @@ module.exports = {
 			for (let j = 0; j < openCategoryTasks.length; j++) {
 				let messageToSend = '';
 
-				switch (openCategoryTasks[j].type) {
-					case 1:
-						messageToSend = `**${openCategoryTasks[j].name}**`;
-						break;
-					case 2:
-						messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`;
+				if (openCategoryTasks[j].type === 1) {
+					messageToSend = `**${openCategoryTasks[j].name}**`;
+				} else if (openCategoryTasks[j].type === 2) {
+					messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`;
 				}
 
 				if (openCategoryTasks[j].dateLastDone) {
@@ -136,6 +134,7 @@ module.exports = {
 			}
 
 			// Delete any messages that are left in the array
+			// eslint-disable-next-line no-unused-vars
 			for (const [key, value] of openCategoryMessages) {
 				await value.delete();
 			}
@@ -157,12 +156,10 @@ module.exports = {
 			for (let j = 0; j < doneCategoryTasks.length; j++) {
 				let messageToSend = '';
 
-				switch (doneCategoryTasks[j].type) {
-					case 1:
-						messageToSend = `**${doneCategoryTasks[j].name}** - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
-						break;
-					case 2:
-						messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+				if (doneCategoryTasks[j].type === 1) {
+					messageToSend = `**${doneCategoryTasks[j].name}** - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+				} else if (doneCategoryTasks[j].type === 2) {
+					messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
 				}
 
 				if (doneCategoryTasks[j].dateReopen) {
@@ -184,6 +181,7 @@ module.exports = {
 			}
 
 			// Delete any messages that are left in the array
+			// eslint-disable-next-line no-unused-vars
 			for (const [key, value] of doneCategoryMessages) {
 				await value.delete();
 			}
