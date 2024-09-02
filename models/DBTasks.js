@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		resetEveryHours: DataTypes.INTEGER,
 		resetEveryDays: DataTypes.INTEGER,
+		dateOfLastReminder: {
+			type: DataTypes.DATE,
+		},
+		remindEveryHours: DataTypes.INTEGER,
+		peopleToRemind: DataTypes.STRING,
 	}, {
 		indexes: [
 			{
