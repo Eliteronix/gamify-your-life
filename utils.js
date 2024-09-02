@@ -131,6 +131,13 @@ module.exports = {
 
 					openCategoryMessage.react('✅');
 				}
+
+				if (openCategoryTasks[j].remindEveryHours && openCategoryTasks[j].peopleToRemind) {
+					if (!openCategoryTasks[j].dateOfLastReminder || new Date() - openCategoryTasks[j].dateOfLastReminder > openCategoryTasks[j].remindEveryHours * 60 * 60 * 1000) {
+						openCategoryTasks[j].dateOfLastReminder = new Date();
+						openCategoryMessage.reply(`Reminder: <@${openCategoryTasks[j].peopleToRemind.join('>, <@')}>`);
+					}
+				}
 			}
 
 			// Delete any messages that are left in the array
@@ -187,7 +194,8 @@ module.exports = {
 			}
 		}
 	},
-	async reopenRelevantTasks(client) {
+	async manageRelevantTasks(client) {
+		//Reopen tasks that are done and have a reopen date in the past
 		let tasks = await DBTasks.findAll({
 			attributes: ['id', 'guildId'],
 			where: {
@@ -200,6 +208,7 @@ module.exports = {
 
 		for (let i = 0; i < tasks.length; i++) {
 			tasks[i].done = false;
+			tasks[i].dateOfLastReminder = new Date();
 
 			await tasks[i].save();
 		}

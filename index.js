@@ -36,7 +36,7 @@ const interactionCreate = require('./interactionCreate');
 const reactionAdded = require('./reactionAdded');
 
 //Get executeNextProcessQueueTask
-const { executeNextProcessQueueTask, reopenRelevantTasks } = require('./utils');
+const { executeNextProcessQueueTask, manageRelevantTasks } = require('./utils');
 
 //login with the Discord client using the Token from the .env file
 client.login(process.env.BOTTOKEN);
