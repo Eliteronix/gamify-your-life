@@ -125,11 +125,6 @@ module.exports = {
 				name: categoryName,
 			});
 
-			await interaction.guild.channels.create({
-				name: categoryName,
-				type: Discord.Constants.TextBasedChannelTypes.GuildText,
-			});
-
 			try {
 				await interaction.editReply(`Category \`${categoryName}\` created`);
 			} catch (error) {
@@ -137,6 +132,8 @@ module.exports = {
 					console.error(error);
 				}
 			}
+
+			updateGuildDisplay(interaction.guild);
 		} else if (subcommand === 'rename') {
 			const categoryName = interaction.options.getString('name').toLowerCase();
 
@@ -182,6 +179,8 @@ module.exports = {
 					console.error(error);
 				}
 			}
+
+			updateGuildDisplay(interaction.guild);
 		} else if (subcommand === 'delete') {
 			const categoryName = interaction.options.getString('name').toLowerCase();
 
@@ -223,6 +222,8 @@ module.exports = {
 					console.error(error);
 				}
 			}
+
+			updateGuildDisplay(interaction.guild);
 		}
 	},
 };
