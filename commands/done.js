@@ -1,4 +1,4 @@
-const { DBTasks, DBGuildSettings } = require('../dbObjects');
+const { DBTasks } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { updateGuildDisplay, markTaskAsDone } = require('../utils');
 
