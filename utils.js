@@ -135,7 +135,8 @@ module.exports = {
 				if (openCategoryTasks[j].remindEveryHours && openCategoryTasks[j].peopleToRemind) {
 					if (!openCategoryTasks[j].dateOfLastReminder || new Date() - openCategoryTasks[j].dateOfLastReminder > openCategoryTasks[j].remindEveryHours * 60 * 60 * 1000) {
 						openCategoryTasks[j].dateOfLastReminder = new Date();
-						openCategoryMessage.reply(`Reminder: <@${openCategoryTasks[j].peopleToRemind.join('>, <@')}>`);
+						openCategoryMessage.reply(`Reminder: <@${openCategoryTasks[j].peopleToRemind.substring(1).split(';').join('>, <@')}>`);
+						openCategoryTasks[j].save();
 					}
 				}
 			}
@@ -208,12 +209,32 @@ module.exports = {
 
 		for (let i = 0; i < tasks.length; i++) {
 			tasks[i].done = false;
-			tasks[i].dateOfLastReminder = new Date();
 
 			await tasks[i].save();
 		}
 
 		let guildsToUpdate = [...new Set(tasks.map(t => t.guildId))];
+
+		let tasksWithReminders = await DBTasks.findAll({
+			attributes: ['guildId', 'dateOfLastReminder', 'remindEveryHours'],
+			where: {
+				remindEveryHours: {
+					[Op.not]: null
+				},
+				peopleToRemind: {
+					[Op.not]: null
+				},
+				guildId: {
+					[Op.notIn]: guildsToUpdate
+				}
+			}
+		});
+
+		for (let i = 0; i < tasksWithReminders.length; i++) {
+			if (!tasksWithReminders[i].dateOfLastReminder || new Date() - tasksWithReminders[i].dateOfLastReminder > tasksWithReminders[i].remindEveryHours * 60 * 60 * 1000) {
+				guildsToUpdate.push(tasksWithReminders[i].guildId);
+			}
+		}
 
 		for (let i = 0; i < guildsToUpdate.length; i++) {
 			let guild = await client.guilds.fetch(guildsToUpdate[i]);

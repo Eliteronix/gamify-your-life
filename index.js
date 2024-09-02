@@ -103,7 +103,7 @@ function readyDiscord() {
 
 	setTimeout(() => {
 		executeProcessQueue(client);
-		reopenTasks(client);
+		manageTasks(client);
 	}, 60000);
 }
 
@@ -127,14 +127,14 @@ async function executeProcessQueue(client) {
 	}, 650);
 }
 
-async function reopenTasks(client) {
+async function manageTasks(client) {
 	try {
-		await reopenRelevantTasks(client);
+		await manageRelevantTasks(client);
 	} catch (e) {
-		console.error('index.js | reopenRelevantTasks ' + e);
+		console.error('index.js | manageRelevantTasks ' + e);
 	}
 
 	setTimeout(() => {
-		reopenTasks(client);
+		manageTasks(client);
 	}, 60000);
 }

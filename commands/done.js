@@ -8,7 +8,6 @@ module.exports = {
 		.setName('done')
 		.setDescription('Mark a task as done')
 		.setDMPermission(false)
-		.setDescription('Create a new checkbox task')
 		.addStringOption(option =>
 			option
 				.setName('name')
