@@ -226,7 +226,8 @@ module.exports = {
 				},
 				guildId: {
 					[Op.notIn]: guildsToUpdate
-				}
+				},
+				done: false
 			}
 		});
 
