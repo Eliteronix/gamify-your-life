@@ -1,6 +1,6 @@
 const { DBCategories } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const Discord = require('discord.js');
+const { updateGuildDisplay } = require('../utils');
 
 module.exports = {
 	name: 'category',
