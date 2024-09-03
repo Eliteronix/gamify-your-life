@@ -247,6 +247,8 @@ module.exports = {
 				name: taskName,
 				type: 1,
 				dateReopen: new Date(),
+				resetEveryDays: interaction.options.getInteger('reset-every-days'),
+				resetEveryHours: interaction.options.getInteger('reset-every-hours'),
 			});
 
 			await interaction.followUp(`Task \`${taskName}\` has been created`);
