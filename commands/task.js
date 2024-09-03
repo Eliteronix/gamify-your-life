@@ -1,4 +1,4 @@
-const { DBCategories, DBTasks, DBTaskCategories } = require('../dbObjects');
+const { DBCategories, DBTasks, DBTaskCategories, DBGuildSettings } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { updateGuildDisplay } = require('../utils');
 
@@ -313,6 +313,39 @@ module.exports = {
 				if (task.type === 1) {
 					task.resetEveryDays = resetEveryDays;
 					task.resetEveryHours = null;
+
+					if (task.done) {
+						task.dateReopen = task.dateLastDone;
+
+						let guildSettings = await DBGuildSettings.findOne({
+							attributes: ['dailyResetTime'],
+							where: {
+								guildId: interaction.guild.id,
+							},
+						});
+
+						if (!guildSettings) {
+							guildSettings = await DBGuildSettings.create({
+								guildId: interaction.guild.id,
+								dailyResetTime: 5,
+							});
+						}
+
+						task.dateReopen.setMinutes(0);
+						task.dateReopen.setSeconds(0);
+						task.dateReopen.setMilliseconds(0);
+
+						let hoursDifferenceToReset = task.dateReopen.getUTCHours() - guildSettings.dailyResetTime;
+
+						task.dateReopen.setUTCHours(guildSettings.dailyResetTime);
+
+						// If the reset time was in the future, set it to the previous day | calculated by the difference between the current time and the reset time
+						if (hoursDifferenceToReset < 0) {
+							task.dateReopen.setDate(task.dateReopen.getDate() - 1);
+						}
+
+						task.dateReopen.setDate(task.dateReopen.getDate() + task.resetEveryDays);
+					}
 				} else {
 					try {
 						await interaction.followUp('Task is not a checkbox task and cannot be updated with reset-every-days');
@@ -330,6 +363,11 @@ module.exports = {
 				if (task.type === 1) {
 					task.resetEveryHours = resetEveryHours;
 					task.resetEveryDays = null;
+
+					if (task.done) {
+						task.dateReopen = task.dateLastDone;
+						task.dateReopen.setHours(task.dateReopen.getHours() + task.resetEveryHours);
+					}
 				} else {
 					try {
 						await interaction.followUp('Task is not a checkbox task and cannot be updated with reset-every-hours');
