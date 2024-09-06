@@ -38,7 +38,7 @@ module.exports = {
 			}
 		});
 
-		let categoryNames = categories.map(c => c.name).sort();
+		let categoryNames = categories.map(c => c.name);
 
 		categoryNames.unshift('uncategorized');
 
@@ -52,7 +52,16 @@ module.exports = {
 			}
 		});
 
-		// Create open and done discord categories
+		// Create stats, open and done discord categories
+		let statsCategory = guild.channels.cache.find(c => c.name === 'stats');
+
+		if (!statsCategory) {
+			statsCategory = await guild.channels.create({
+				name: 'stats',
+				type: ChannelType.GuildCategory
+			});
+		}
+
 		let openCategory = guild.channels.cache.find(c => c.name === 'open');
 
 		if (!openCategory) {
@@ -72,6 +81,8 @@ module.exports = {
 		}
 
 		// Create category channels under open and done
+		let statsCategoryChannels = statsCategory.children.cache.filter(c => c.type === ChannelType.GuildVoice);
+
 		let openCategoryChannels = openCategory.children.cache.filter(c => c.type === ChannelType.GuildText);
 
 		let doneCategoryChannels = doneCategory.children.cache.filter(c => c.type === ChannelType.GuildText);
@@ -86,6 +97,41 @@ module.exports = {
 
 				tasksInCategory = tasks.filter(t => taskCategoryConnections.find(tc => tc.taskId === t.id && tc.categoryId === categoryId));
 			}
+
+			let statsCategoryChannel = statsCategoryChannels.find(c => c.name.startsWith(`${categoryNames[i]} |`));
+
+			if (!statsCategoryChannel) {
+				statsCategoryChannel = await guild.channels.create({
+					name: `${categoryNames[i]} |`,
+					type: ChannelType.GuildVoice,
+					parent: statsCategory
+				});
+			}
+
+			let percentageDone = 'None';
+
+			if (tasksInCategory.length > 0) {
+				if (categoryNames[i] === 'uncategorized') {
+					percentageDone = (tasksInCategory.filter(t => t.done).length / tasksInCategory.length * 100).toFixed(0) + '%';
+				} else {
+					let totalWeight = 0;
+					let doneWeight = 0;
+
+					for (let j = 0; j < tasksInCategory.length; j++) {
+						let taskCategoryConnection = taskCategoryConnections.find(tc => tc.taskId === tasksInCategory[j].id && tc.categoryId === categories[i - 1].id);
+
+						totalWeight += taskCategoryConnection.weight;
+
+						if (tasksInCategory[j].done) {
+							doneWeight += taskCategoryConnection.weight;
+						}
+					}
+
+					percentageDone = (doneWeight / totalWeight * 100).toFixed(0) + '%';
+				}
+			}
+
+			statsCategoryChannel.setName(`${categoryNames[i]} | ${percentageDone}`);
 
 			let openCategoryChannel = openCategoryChannels.find(c => c.name === categoryNames[i]);
 
