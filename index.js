@@ -37,6 +37,7 @@ const reactionAdded = require('./reactionAdded');
 
 //Get executeNextProcessQueueTask
 const { executeNextProcessQueueTask, manageRelevantTasks } = require('./utils');
+const { DBProcessQueue } = require('./dbObjects');
 
 //login with the Discord client using the Token from the .env file
 client.login(process.env.BOTTOKEN);
@@ -102,6 +103,15 @@ function readyDiscord() {
 	})();
 
 	setTimeout(() => {
+		//Reste all processqueue tasks which may be started
+		DBProcessQueue.update({
+			beingExecuted: false
+		}, {
+			where: {
+				beingExecuted: true
+			}
+		});
+
 		executeProcessQueue(client);
 		manageTasks(client);
 	}, 60000);
