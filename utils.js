@@ -120,6 +120,9 @@ module.exports = {
 					for (let j = 0; j < tasksInCategory.length; j++) {
 						let taskCategoryConnection = taskCategoryConnections.find(tc => tc.taskId === tasksInCategory[j].id && tc.categoryId === categories[i - 1].id);
 
+						tasksInCategory[j].weight = taskCategoryConnection.weight;
+						tasksInCategory[j].weightType = taskCategoryConnection.type;
+
 						totalWeight += taskCategoryConnection.weight;
 
 						if (tasksInCategory[j].done) {
@@ -148,12 +151,10 @@ module.exports = {
 			let openCategoryMessages = await openCategoryChannel.messages.fetch();
 
 			for (let j = 0; j < openCategoryTasks.length; j++) {
-				let messageToSend = '';
+				let messageToSend = `**${openCategoryTasks[j].name}**`;
 
-				if (openCategoryTasks[j].type === 1) {
-					messageToSend = `**${openCategoryTasks[j].name}**`;
-				} else if (openCategoryTasks[j].type === 2) {
-					messageToSend = `**${openCategoryTasks[j].name}** - ${openCategoryTasks[j].amount}`;
+				if (openCategoryTasks[j].type === 2) {
+					messageToSend = `${messageToSend} - ${openCategoryTasks[j].amount}`;
 				}
 
 				if (openCategoryTasks[j].dateLastDone) {
@@ -164,6 +165,16 @@ module.exports = {
 					messageToSend = messageToSend + ` - reopened <t:${parseInt(openCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				} else {
 					messageToSend = messageToSend + ' - Did not reopen automatically';
+				}
+
+				messageToSend = messageToSend + ` - Weight: ${openCategoryTasks[j].weight}`;
+
+				if (openCategoryTasks[j].type === 2) {
+					if (openCategoryTasks[j].weightType === 1) {
+						messageToSend = `${messageToSend} - Absolute`;
+					} else {
+						messageToSend = `${messageToSend} - Relative`;
+					}
 				}
 
 				let openCategoryMessage = openCategoryMessages.find(m => m.content === messageToSend);
@@ -208,18 +219,28 @@ module.exports = {
 			let doneCategoryMessages = await doneCategoryChannel.messages.fetch();
 
 			for (let j = 0; j < doneCategoryTasks.length; j++) {
-				let messageToSend = '';
+				let messageToSend = `**${doneCategoryTasks[j].name}**`;
 
-				if (doneCategoryTasks[j].type === 1) {
-					messageToSend = `**${doneCategoryTasks[j].name}** - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
-				} else if (doneCategoryTasks[j].type === 2) {
-					messageToSend = `**${doneCategoryTasks[j].name}** - ${doneCategoryTasks[j].amount} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
+				if (doneCategoryTasks[j].type === 2) {
+					messageToSend = `${messageToSend} - ${doneCategoryTasks[j].amount}`;
 				}
+
+				messageToSend = `${messageToSend} - Done <t:${parseInt(doneCategoryTasks[j].dateLastDone.getTime() / 1000)}:R>`;
 
 				if (doneCategoryTasks[j].dateReopen) {
 					messageToSend = messageToSend + ` - reopens <t:${parseInt(doneCategoryTasks[j].dateReopen.getTime() / 1000)}:R>`;
 				} else {
 					messageToSend = messageToSend + ' - Does not reopen automatically';
+				}
+
+				messageToSend = messageToSend + ` - Weight: ${doneCategoryTasks[j].weight}`;
+
+				if (doneCategoryTasks[j].type === 2) {
+					if (doneCategoryTasks[j].weightType === 1) {
+						messageToSend = `${messageToSend} - Absolute`;
+					} else {
+						messageToSend = `${messageToSend} - Relative`;
+					}
 				}
 
 				let doneCategoryMessage = doneCategoryMessages.find(m => m.content === messageToSend);
