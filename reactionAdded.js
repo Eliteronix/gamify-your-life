@@ -6,7 +6,9 @@ module.exports = async function (reaction, user) {
 		try {
 			await reaction.fetch();
 		} catch (error) {
-			console.error('reactionAdded.js | Fetching message failed: ', error);
+			if (error.message !== 'Unknown Message') {
+				console.error('reactionAdded.js | Fetching message failed: ', error);
+			}
 			return;
 		}
 	}
