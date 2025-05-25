@@ -258,7 +258,13 @@ module.exports = {
 			// Delete any messages that are left in the array
 			// eslint-disable-next-line no-unused-vars
 			for (const [key, value] of doneCategoryMessages) {
-				await value.delete();
+				try {
+					await value.delete();
+				} catch (e) {
+					if (e.message !== 'Unknown Message') {
+						console.error('Error deleting message in done category', e);
+					}
+				}
 			}
 		}
 	},
