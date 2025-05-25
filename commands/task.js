@@ -423,7 +423,7 @@ module.exports = {
 				}
 			}
 		} else if (subcommand === 'delete') {
-			const taskName = interaction.options.getString('task');
+			const taskName = interaction.options.getString('task').toLowerCase();
 
 			const task = await DBTasks.findOne({
 				where: {
