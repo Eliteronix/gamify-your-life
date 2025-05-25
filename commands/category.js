@@ -1,4 +1,4 @@
-const { DBCategories } = require('../dbObjects');
+const { DBCategories, DBTaskCategories } = require('../dbObjects');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { updateGuildDisplay } = require('../utils');
 
@@ -206,6 +206,13 @@ module.exports = {
 				where: {
 					guildId: interaction.guild.id,
 					name: categoryName,
+				},
+			});
+
+			await DBTaskCategories.destroy({
+				where: {
+					guildId: interaction.guild.id,
+					categoryId: category.id,
 				},
 			});
 
