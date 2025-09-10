@@ -192,7 +192,26 @@ module.exports = {
 				if (openCategoryTasks[j].remindEveryHours && openCategoryTasks[j].peopleToRemind) {
 					if (!openCategoryTasks[j].dateOfLastReminder || new Date() - openCategoryTasks[j].dateOfLastReminder > openCategoryTasks[j].remindEveryHours * 60 * 60 * 1000) {
 						openCategoryTasks[j].dateOfLastReminder = new Date();
-						openCategoryMessage.reply(`Reminder: <@${openCategoryTasks[j].peopleToRemind.substring(1).split(';').join('>, <@')}>`);
+
+						let remindPeople = openCategoryTasks[j].peopleToRemind.split(';');
+
+						for (let k = 0; k < remindPeople.length; k++) {
+							let member = await guild.members.fetch(remindPeople[k].substring(1, remindPeople[k].length - 1)).catch(() => null);
+
+							if (!member) {
+								// Remove the user from the list
+								remindPeople.splice(k, 1);
+								k--;
+							}
+
+							try {
+								// DM the user the reminder
+								member.send(`Reminder: The task **${openCategoryTasks[j].name}** is still not done!`).catch(() => null);
+							} catch (e) {
+								console.error('Error sending reminder DM', e);
+							}
+						}
+
 						openCategoryTasks[j].save();
 					}
 				}
