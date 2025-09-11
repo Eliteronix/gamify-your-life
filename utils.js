@@ -196,7 +196,7 @@ module.exports = {
 						let remindPeople = openCategoryTasks[j].peopleToRemind.split(';');
 
 						for (let k = 0; k < remindPeople.length; k++) {
-							let member = await guild.members.fetch(remindPeople[k].substring(1, remindPeople[k].length - 1)).catch(() => null);
+							let member = await guild.members.fetch(remindPeople[k]).catch(() => null);
 
 							if (!member) {
 								// Remove the user from the list
