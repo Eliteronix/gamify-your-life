@@ -209,6 +209,7 @@ module.exports = {
 								member.send(`Reminder: The task **${openCategoryTasks[j].name}** is still not done!`).catch(() => null);
 							} catch (e) {
 								console.error('Error sending reminder DM', e);
+								console.log(remindPeople[k], member);
 							}
 						}
 
