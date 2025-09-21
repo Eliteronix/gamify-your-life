@@ -64,7 +64,7 @@ module.exports = async function (reaction, user) {
 		task.done = false;
 
 		let streakEndDate = new Date();
-		let dateDiff = streakEndDate - tasks[i].dateLastDone;
+		let dateDiff = streakEndDate - task.dateLastDone;
 		streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
 
 		await task.save();
