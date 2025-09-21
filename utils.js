@@ -330,11 +330,11 @@ module.exports = {
 		}, {
 			where: {
 				streakEndDate: {
-					[Op.lt]: new Date()
+					[Op.and]: {
+						[Op.lt]: new Date(),
+						[Op.not]: null
+					}
 				},
-				streakEndDate: {
-					[Op.not]: null
-				}
 			}
 		});
 
@@ -345,11 +345,11 @@ module.exports = {
 		}, {
 			where: {
 				streakEndDate: {
-					[Op.lt]: new Date()
+					[Op.and]: {
+						[Op.lt]: new Date(),
+						[Op.not]: null
+					}
 				},
-				streakEndDate: {
-					[Op.not]: null
-				}
 			}
 		});
 
