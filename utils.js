@@ -427,6 +427,34 @@ module.exports = {
 		}
 
 		await task.save();
+
+		// Set streak for categories
+		let taskCategories = await DBTaskCategories.findAll({
+			where: {
+				taskId: task.id
+			}
+		});
+
+		for (let i = 0; i < taskCategories.length; i++) {
+			let category = await DBCategories.findOne({
+				where: {
+					id: taskCategories[i].categoryId
+				}
+			});
+
+			if (category) {
+				if (!category.streakStartDate) {
+					category.streakStartDate = new Date();
+				}
+
+				let tomorrow = new Date();
+				tomorrow.setDate(tomorrow.getDate() + 1);
+
+				category.streakEndDate = tomorrow;
+
+				await category.save();
+			}
+		}
 	}
 };
 
