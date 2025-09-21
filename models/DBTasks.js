@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		remindEveryHours: DataTypes.INTEGER,
 		peopleToRemind: DataTypes.STRING,
+		streakStartDate: DataTypes.DATE,
+		streakEndDate: DataTypes.DATE,
 	}, {
 		indexes: [
 			{

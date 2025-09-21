@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
 			allowNullValue: false,
 		},
 		name: DataTypes.STRING,
+		streakStartDate: DataTypes.DATE,
+		streakEndDate: DataTypes.DATE,
 	}, {
 		indexes: [
 			{
