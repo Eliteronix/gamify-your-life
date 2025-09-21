@@ -295,6 +295,37 @@ module.exports = {
 		}
 	},
 	async manageRelevantTasks(client) {
+		//Remove streaks from tasks
+		await DBTasks.update({
+			streakStartDate: null,
+			streakEndDate: null,
+			streak: 0
+		}, {
+			where: {
+				streakEndDate: {
+					[Op.lt]: new Date()
+				},
+				streakEndDate: {
+					[Op.not]: null
+				}
+			}
+		});
+
+		//Remove streaks from categories
+		await DBCategories.update({
+			streakStartDate: null,
+			streakEndDate: null
+		}, {
+			where: {
+				streakEndDate: {
+					[Op.lt]: new Date()
+				},
+				streakEndDate: {
+					[Op.not]: null
+				}
+			}
+		});
+
 		//Reopen tasks that are done and have a reopen date in the past
 		let tasks = await DBTasks.findAll({
 			attributes: ['id', 'guildId', 'streakEndDate', 'dateLastDone'],
