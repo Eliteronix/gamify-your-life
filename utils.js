@@ -89,11 +89,12 @@ module.exports = {
 
 		for (let i = 0; i < categoryNames.length; i++) {
 			let tasksInCategory = [];
+			let categoryId = null;
 
 			if (categoryNames[i] === 'uncategorized') {
 				tasksInCategory = tasks.filter(t => taskCategoryConnections.filter(tc => tc.taskId === t.id).length === 0);
 			} else {
-				let categoryId = categories.find(c => c.name.replace(/ +/gm, '-').toLowerCase() === categoryNames[i]).id;
+				categoryId = categories.find(c => c.name.replace(/ +/gm, '-').toLowerCase() === categoryNames[i]).id;
 
 				tasksInCategory = tasks.filter(t => taskCategoryConnections.find(tc => tc.taskId === t.id && tc.categoryId === categoryId));
 			}
@@ -131,6 +132,32 @@ module.exports = {
 					}
 
 					percentageDone = (doneWeight / totalWeight * 100).toFixed(0) + '%';
+
+					if (categoryId && doneWeight === totalWeight) {
+						let tomorrow = new Date();
+						tomorrow.setDate(tomorrow.getDate() + 1);
+
+						await DBCategories.update({
+							streakEndDate: tomorrow,
+						}, {
+							where: {
+								id: categoryId
+							}
+						});
+					}
+				}
+			} else {
+				if (categoryId) {
+					let tomorrow = new Date();
+					tomorrow.setDate(tomorrow.getDate() + 1);
+
+					await DBCategories.update({
+						streakEndDate: tomorrow,
+					}, {
+						where: {
+							id: categoryId
+						}
+					});
 				}
 			}
 
