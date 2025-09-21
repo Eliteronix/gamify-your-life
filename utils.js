@@ -297,7 +297,7 @@ module.exports = {
 	async manageRelevantTasks(client) {
 		//Reopen tasks that are done and have a reopen date in the past
 		let tasks = await DBTasks.findAll({
-			attributes: ['id', 'guildId'],
+			attributes: ['id', 'guildId', 'streakEndDate', 'dateLastDone'],
 			where: {
 				dateReopen: {
 					[Op.lt]: new Date()
@@ -308,6 +308,10 @@ module.exports = {
 
 		for (let i = 0; i < tasks.length; i++) {
 			tasks[i].done = false;
+
+			let streakEndDate = new Date();
+			let dateDiff = streakEndDate - tasks[i].dateLastDone;
+			streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
 
 			await tasks[i].save();
 		}
@@ -345,6 +349,14 @@ module.exports = {
 	async markTaskAsDone(task, guildId) {
 		task.done = true;
 		task.dateLastDone = new Date();
+
+		if (!task.streakStartDate) {
+			task.streakStartDate = new Date();
+		}
+
+		task.streakEndDate = null;
+
+		task.streak = (task.streak || 0) + 1;
 
 		task.dateReopen = new Date();
 

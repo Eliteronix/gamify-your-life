@@ -49,8 +49,10 @@ module.exports = async function (reaction, user) {
 		let taskName = reaction.message.content.replace('**', '').replace(/\*\*.+/gm, '');
 
 		let task = await DBTasks.findOne({
+			attributes: ['id', 'streakEndDate', 'dateLastDone'],
 			where: {
 				name: taskName,
+				guildId: reaction.message.guild.id,
 			},
 		});
 
@@ -60,6 +62,10 @@ module.exports = async function (reaction, user) {
 		}
 
 		task.done = false;
+
+		let streakEndDate = new Date();
+		let dateDiff = streakEndDate - tasks[i].dateLastDone;
+		streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
 
 		await task.save();
 
