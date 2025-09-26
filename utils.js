@@ -223,6 +223,13 @@ module.exports = {
 						let remindPeople = openCategoryTasks[j].peopleToRemind.split(';');
 
 						for (let k = 0; k < remindPeople.length; k++) {
+							// Remove empty entries
+							if (!remindPeople[k]) {
+								remindPeople.splice(k, 1);
+								k--;
+								continue;
+							}
+
 							let member = await guild.members.fetch(remindPeople[k]).catch(() => null);
 
 							if (!member) {
@@ -235,7 +242,6 @@ module.exports = {
 								// DM the user the reminder
 								member.send(`Reminder: The task **${openCategoryTasks[j].name}** is still not done!`).catch(() => null);
 							} catch (e) {
-								console.log('remindPeople[k]', remindPeople[k]);
 								console.error('Error sending reminder DM', e);
 							}
 						}
