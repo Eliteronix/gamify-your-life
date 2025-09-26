@@ -134,11 +134,11 @@ module.exports = {
 					percentageDone = (doneWeight / totalWeight * 100).toFixed(0) + '%';
 
 					if (categoryId && doneWeight === totalWeight) {
-						let tomorrow = new Date();
-						tomorrow.setDate(tomorrow.getDate() + 1);
+						let dayAfterTomorrow = new Date();
+						dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
 
 						await DBCategories.update({
-							streakEndDate: tomorrow,
+							streakEndDate: dayAfterTomorrow,
 						}, {
 							where: {
 								id: categoryId
@@ -148,11 +148,11 @@ module.exports = {
 				}
 			} else {
 				if (categoryId) {
-					let tomorrow = new Date();
-					tomorrow.setDate(tomorrow.getDate() + 1);
+					let dayAfterTomorrow = new Date();
+					dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
 
 					await DBCategories.update({
-						streakEndDate: tomorrow,
+						streakEndDate: dayAfterTomorrow,
 					}, {
 						where: {
 							id: categoryId
@@ -480,10 +480,10 @@ module.exports = {
 					category.streakStartDate = new Date();
 				}
 
-				let tomorrow = new Date();
-				tomorrow.setDate(tomorrow.getDate() + 1);
+				let dayAfterTomorrow = new Date();
+				dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
 
-				category.streakEndDate = tomorrow;
+				category.streakEndDate = dayAfterTomorrow;
 
 				await category.save();
 			}
