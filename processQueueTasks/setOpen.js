@@ -21,6 +21,8 @@ module.exports = {
 		let dateDiff = streakEndDate - task.dateLastDone;
 		streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
 
+		task.streakEndDate = streakEndDate;
+
 		await task.save();
 
 		let guild = await client.guilds.fetch(processQueueEntry.guildId);

@@ -377,6 +377,8 @@ module.exports = {
 			let dateDiff = streakEndDate - tasks[i].dateLastDone;
 			streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
 
+			tasks[i].streakEndDate = streakEndDate;
+
 			await tasks[i].save();
 		}
 
