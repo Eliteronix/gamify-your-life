@@ -21,6 +21,8 @@ module.exports = {
 		let dateDiff = streakEndDate - task.dateLastDone;
 		streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
 
+		streakEndDate.setDate(streakEndDate.getDate() + 1);
+
 		task.streakEndDate = streakEndDate;
 
 		await task.save();
