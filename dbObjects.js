@@ -36,6 +36,7 @@ const DBCategories = require('./models/DBCategories')(mainData, Sequelize.DataTy
 const DBGuildSettings = require('./models/DBGuildSettings')(mainData, Sequelize.DataTypes);
 const DBTaskCategories = require('./models/DBTaskCategories')(mainData, Sequelize.DataTypes);
 const DBTasks = require('./models/DBTasks')(mainData, Sequelize.DataTypes);
+const DBTriggers = require('./models/DBTriggers')(mainData, Sequelize.DataTypes);
 
 module.exports = {
 	DBProcessQueue,
@@ -43,4 +44,5 @@ module.exports = {
 	DBGuildSettings,
 	DBTaskCategories,
 	DBTasks,
+	DBTriggers,
 };

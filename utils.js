@@ -1,4 +1,4 @@
-const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories, DBGuildSettings } = require('./dbObjects');
+const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories, DBGuildSettings, DBTriggers } = require('./dbObjects');
 const { Op } = require('sequelize');
 const { ChannelType } = require('discord.js');
 
@@ -490,6 +490,82 @@ module.exports = {
 				category.streakEndDate = dayAfterTomorrow;
 
 				await category.save();
+			}
+		}
+
+		// Execute any triggers for this task
+		let triggers = await DBTriggers.findAll({
+			where: {
+				triggerTaskId: task.id,
+				guildId: guildId,
+			},
+		});
+
+		for (let i = 0; i < taskCategories.length; i++) {
+			let categoryTriggers = await DBTriggers.findAll({
+				where: {
+					triggerCategoryId: taskCategories[i].categoryId,
+					guildId: guildId,
+				},
+			});
+
+			triggers = triggers.concat(categoryTriggers);
+		}
+
+		// Remove duplicate triggers and place them accordingly
+		let openTasks = [];
+		let openTasksIds = [];
+		let markAsDoneTasks = [];
+		let markAsDoneTasksIds = [];
+
+		for (let i = 0; i < triggers.length; i++) {
+			if (triggers[i].triggerType === 1) {
+				if (!markAsDoneTasksIds.includes(triggers[i].id)) {
+					markAsDoneTasks.push(triggers[i]);
+					markAsDoneTasksIds.push(triggers[i].id);
+				}
+			} else {
+				if (!openTasksIds.includes(triggers[i].id)) {
+					openTasks.push(triggers[i]);
+					openTasksIds.push(triggers[i].id);
+				}
+			}
+		}
+
+		// Open tasks
+		for (let i = 0; i < openTasks.length; i++) {
+			let actionTask = await DBTasks.findOne({
+				where: {
+					id: openTasks[i].actionTaskId,
+				},
+			});
+
+			if (actionTask) {
+				actionTask.done = false;
+
+				let streakEndDate = new Date();
+				let dateDiff = streakEndDate - task.dateLastDone;
+				streakEndDate.setTime(streakEndDate.getTime() + dateDiff);
+
+				streakEndDate.setDate(streakEndDate.getDate() + 1);
+
+				task.streakEndDate = streakEndDate;
+
+				actionTask.dateReopen = null;
+				await actionTask.save();
+			}
+		}
+
+		// Mark tasks as done
+		for (let i = 0; i < markAsDoneTasks.length; i++) {
+			let actionTask = await DBTasks.findOne({
+				where: {
+					id: markAsDoneTasks[i].actionTaskId,
+				},
+			});
+
+			if (actionTask) {
+				await module.exports.markTaskAsDone(actionTask, guildId);
 			}
 		}
 	}

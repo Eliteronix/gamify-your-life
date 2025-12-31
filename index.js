@@ -129,7 +129,7 @@ async function executeProcessQueue(client) {
 	try {
 		await executeNextProcessQueueTask(client);
 	} catch (e) {
-		console.error('index.js | executeNextProcessQueueTask ' + e);
+		console.error('index.js | executeNextProcessQueueTask', e);
 	}
 
 	setTimeout(() => {
@@ -141,7 +141,7 @@ async function manageTasks(client) {
 	try {
 		await manageRelevantTasks(client);
 	} catch (e) {
-		console.error('index.js | manageRelevantTasks ' + e);
+		console.error('index.js | manageRelevantTasks', e);
 	}
 
 	setTimeout(() => {

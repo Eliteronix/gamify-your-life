@@ -39,6 +39,7 @@ require('./models/DBCategories')(mainData, Sequelize.DataTypes);
 require('./models/DBGuildSettings')(mainData, Sequelize.DataTypes);
 require('./models/DBTaskCategories')(mainData, Sequelize.DataTypes);
 require('./models/DBTasks')(mainData, Sequelize.DataTypes);
+require('./models/DBTriggers')(mainData, Sequelize.DataTypes);
 
 processQueue.sync({ alter: true })
 	.then(async () => {
