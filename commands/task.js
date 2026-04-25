@@ -303,7 +303,7 @@ module.exports = {
 				return;
 			}
 
-			const name = interaction.options.getString('name');
+			const name = interaction.options.getString('name').toLowerCase();
 
 			if (name) {
 				task.name = name;
