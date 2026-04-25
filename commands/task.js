@@ -283,7 +283,7 @@ module.exports = {
 
 			await interaction.followUp(`Task \`${taskName}\` has been created`);
 		} else if (subcommand === 'update') {
-			const taskName = interaction.options.getString('task').toLowerCase();
+			const taskName = interaction.options.getString('task');
 
 			const task = await DBTasks.findOne({
 				where: {
