@@ -1,6 +1,6 @@
 const { DBProcessQueue, DBCategories, DBTasks, DBTaskCategories, DBGuildSettings, DBTriggers } = require('./dbObjects');
 const { Op } = require('sequelize');
-const { ChannelType } = require('discord.js');
+const { ChannelType, ButtonBuilder, ActionRowBuilder } = require('discord.js');
 
 module.exports = {
 	executeNextProcessQueueTask: async function (client) {
@@ -239,8 +239,16 @@ module.exports = {
 							}
 
 							try {
+								let doneButton = new ButtonBuilder()
+									.setCustomId(`markAsDone-${guild.id}-${openCategoryTasks[j].name}`)
+									.setURL(`https://www.eliteronix.de/gamify-done?g=${guild.id}&t=${openCategoryTasks[j].name}`)
+									.setStyle('Link');
+
+								let row = new ActionRowBuilder()
+									.addComponents(doneButton);
+
 								// DM the user the reminder
-								member.send(`Reminder: The task **${openCategoryTasks[j].name}** is still not done!`).catch(() => null);
+								member.send({ content: `Reminder: The task **${openCategoryTasks[j].name}** is still not done!`, components: [row] }).catch(() => null);
 							} catch (e) {
 								console.error('Error sending reminder DM', e);
 							}
