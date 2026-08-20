@@ -238,9 +238,11 @@ module.exports = {
 								k--;
 							}
 
+							console.log('Member reminder now');
+							
 							try {
+								console.log('Building button');
 								let doneButton = new ButtonBuilder()
-									.setCustomId(`markAsDone-${guild.id}-${openCategoryTasks[j].name}`)
 									.setURL(`https://www.eliteronix.de/gamify-done?g=${guild.id}&t=${openCategoryTasks[j].name}`)
 									.setStyle('Link');
 
@@ -248,7 +250,7 @@ module.exports = {
 									.addComponents(doneButton);
 
 								// DM the user the reminder
-								member.send({ content: `Reminder: The task **${openCategoryTasks[j].name}** is still not done!`, components: [row] }).catch(() => null);
+								await member.send({ content: `Reminder: The task **${openCategoryTasks[j].name}** is still not done!`, components: [row] }).catch(() => null);
 							} catch (e) {
 								console.error('Error sending reminder DM', e);
 							}
