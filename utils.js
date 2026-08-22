@@ -239,7 +239,7 @@ module.exports = {
 							}
 
 							console.log('Member reminder now');
-							
+
 							try {
 								console.log('Building button');
 								let doneButton = new ButtonBuilder()
@@ -250,7 +250,7 @@ module.exports = {
 									.addComponents(doneButton);
 
 								// DM the user the reminder
-								await member.send({ content: `Reminder: The task **${openCategoryTasks[j].name}** is still not done!`, components: [row] }).catch(() => null);
+								await member.send({ content: `Reminder: The task **${openCategoryTasks[j].name}** is still not done!`, components: [row] });
 							} catch (e) {
 								console.error('Error sending reminder DM', e);
 							}
