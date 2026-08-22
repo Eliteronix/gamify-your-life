@@ -244,7 +244,8 @@ module.exports = {
 								console.log('Building button');
 								let doneButton = new ButtonBuilder()
 									.setURL(`https://www.eliteronix.de/gamify-done?g=${guild.id}&t=${openCategoryTasks[j].name}`)
-									.setStyle('Link');
+									.setStyle('Link')
+									.setLabel('Mark as done');
 
 								let row = new ActionRowBuilder()
 									.addComponents(doneButton);
