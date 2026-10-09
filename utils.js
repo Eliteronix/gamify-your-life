@@ -238,10 +238,7 @@ module.exports = {
 								k--;
 							}
 
-							console.log('Member reminder now');
-
 							try {
-								console.log('Building button');
 								let doneButton = new ButtonBuilder()
 									.setURL(`https://www.eliteronix.de/gamify-done?g=${guild.id}&t=${openCategoryTasks[j].name}`)
 									.setStyle('Link')
